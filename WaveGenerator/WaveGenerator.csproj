@@ -10,6 +10,25 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <Authors>XstarS</Authors>
+    <Company>XstarS</Company>
+    <Version>1.0.0</Version>
+    <Product>$(AssemblyName)</Product>
+    <Description>$(AssemblyName)</Description>
+    <Copyright>Copyright © $(Company) 2020</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/x-stars/WaveGenerator</PackageProjectUrl>
+    <PackageIconUrl></PackageIconUrl>
+    <RepositoryUrl>https://github.com/x-stars/WaveGenerator</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <DocumentationFile>
       obj\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml
     </DocumentationFile>
