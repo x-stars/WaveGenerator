@@ -4,8 +4,69 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XstarS.WaveGenerator.Views"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance local:MainWindowModel}"
+        Height="100" Width="480" ResizeMode="NoResize"
+        Title="WaveGenerator">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="6*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Margin="5" VerticalAlignment="Center"
+                      Content="Left" IsChecked="{Binding HasLeftChannel}"/>
+            <CheckBox Grid.Row="1" Margin="5" VerticalAlignment="Center"
+                      Content="Right" IsChecked="{Binding HasRightChannel}"/>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Slider Grid.Column="0" Margin="5" VerticalAlignment="Center"
+                        SmallChange="10" LargeChange="1000"
+                        Minimum="{Binding MinWaveFrequency}"
+                        Maximum="{Binding MaxWaveFrequency}"
+                        Value="{Binding WaveFrequency}"/>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Margin="5" TextWrapping="NoWrap"
+                             HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
+                             Text="{Binding WaveFrequency, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="1" Margin="5" VerticalAlignment="Center" Text="Hz"/>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal"
+                            DataContext="{Binding WaveformView}">
+                    <RadioButton Margin="5" VerticalAlignment="Center"
+                                 Content="Sine" IsChecked="{Binding [Sine]}"/>
+                    <RadioButton Margin="5" VerticalAlignment="Center"
+                                 Content="Square" IsChecked="{Binding [Square]}"/>
+                    <RadioButton Margin="5" VerticalAlignment="Center"
+                                 Content="Triangle" IsChecked="{Binding [Triangle]}"/>
+                    <RadioButton Margin="5" VerticalAlignment="Center"
+                                 Content="Sawtooth" IsChecked="{Binding [Sawtooth]}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Margin="2.5"
+                        Content="Play" Command="{Binding GenerateWaveCommand}"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
