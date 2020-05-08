@@ -221,6 +221,7 @@ namespace XstarS.WaveGenerator.Models
             {
                 if (disposing)
                 {
+                    this.UpdateChunkSize();
                     this.Stream.Dispose();
                 }
 

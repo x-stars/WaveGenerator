@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using XstarS.Collections.Generic;
 
 namespace XstarS
 {
@@ -7,6 +9,22 @@ namespace XstarS
     /// </summary>
     internal static class ArrayExtensions
     {
+        /// <summary>
+        /// 确定当前数组与指定数组的元素是否对应相等。
+        /// </summary>
+        /// <typeparam name="T">数组元素的类型。</typeparam>
+        /// <param name="array">要进行相等比较的数组。</param>
+        /// <param name="other">要与当前数组进行相等比较的数组。</param>
+        /// <param name="comparer">用于比较数组元素的比较器。</param>
+        /// <returns>若 <paramref name="array"/> 与
+        /// <paramref name="other"/> 的每个元素都对应相等，
+        /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
+        public static bool ArrayEquals<T>(this T[] array, T[] other,
+            IEqualityComparer<T> comparer = null)
+        {
+            return new ArrayEqualityComparer<T>(comparer).Equals(array, other);
+        }
+
         /// <summary>
         /// 返回一个新数组，此数组为当前数组和指定数组连接后的结果。
         /// </summary>
