@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using XstarS.ComponentModel;
 using XstarS.WaveGenerator.Models;
@@ -49,19 +50,19 @@ namespace XstarS.WaveGenerator.Views
         /// <summary>
         /// 表示波形声音允许的最小频率。
         /// </summary>
-        public int MinWaveFrequency => 10;
+        public double MinWaveFrequency => 16.0;
 
         /// <summary>
         /// 表示波形声音允许的最大频率。
         /// </summary>
-        public int MaxWaveFrequency => 22000;
+        public double MaxWaveFrequency => 24000.0;
 
         /// <summary>
         /// 获取或设置波形声音的频率。
         /// </summary>
-        public int WaveFrequency
+        public double WaveFrequency
         {
-            get => this.GetProperty<int>();
+            get => this.GetProperty<double>();
             set => this.SetProperty(value);
         }
 
@@ -102,13 +103,15 @@ namespace XstarS.WaveGenerator.Views
         /// </summary>
         public void GenerateWave()
         {
+            if (this.HasErrors) { return; }
             if (!this.CanGenerateWave) { return; }
             this.CanGenerateWave = false;
 
             var path = this.TempWavePath;
             using (var file = File.OpenWrite(path))
             {
-                using (var waveWriter = new WaveStreamWriter(file))
+                using (var waveWriter = new WaveStreamWriter(
+                    file, sampleRate: WaveSampleRate.Hz48000))
                 {
                     var durationSeconds = 1.0;
                     WaveGenerators.GenerateWave(
@@ -143,7 +146,7 @@ namespace XstarS.WaveGenerator.Views
         {
             var amplitude = 1.0;
             return new WaveParameters(
-                this.WaveformView.Value, amplitude, this.WaveFrequency);
+                this.WaveformView.Value, amplitude, (double)this.WaveFrequency);
         }
 
         /// <summary>
@@ -156,7 +159,8 @@ namespace XstarS.WaveGenerator.Views
         }
 
         /// <inheritdoc/>
-        protected override void ValidateProperty(string propertyName)
+        protected override void ValidateProperty(
+            [CallerMemberName] string propertyName = null)
         {
             base.ValidateProperty(propertyName);
             if (propertyName == nameof(this.WaveFrequency))
