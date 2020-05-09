@@ -37,25 +37,25 @@ namespace XstarS
         /// <param name="value">作为值的 32 位有符号整数。</param>
         /// <exception cref="OverflowException">
         /// <paramref name="value"/> 的值超出 <see cref="Int24"/> 的表示范围。</exception>
-        public unsafe Int24(int value)
+        public Int24(int value)
         {
             if ((value < Int24.MinValue) || (value > Int24.MaxValue))
             {
                 throw new OverflowException();
             }
-            this.LowWord = *(ushort*)&value;
-            this.HighByte = ((sbyte*)&value)[2];
+            this.LowWord = (ushort)value;
+            this.HighByte = (sbyte)(value >> 16);
         }
 
         /// <summary>
         /// 将当前 <see cref="Int24"/> 转换为等效的 32 位有符号整数。
         /// </summary>
         /// <returns>转换得到的 32 位有符号整数。</returns>
-        public unsafe int ToInt32()
+        public int ToInt32()
         {
-            var result = (this.HighByte < 0) ? -1 : 0;
-            *(ushort*)&result = this.LowWord;
-            ((sbyte*)&result)[2] = this.HighByte;
+            var result = 0;
+            result |= (int)this.LowWord;
+            result |= (int)this.HighByte << 16;
             return result;
         }
 

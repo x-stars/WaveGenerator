@@ -13,9 +13,9 @@ namespace XstarS.ComponentModel
         where TEnum : struct, Enum
     {
         /// <summary>
-        /// 表示当前选中的枚举值的索引。
+        /// 表示当前视图表示的枚举值的索引。
         /// </summary>
-        private int SelectedIndexValue;
+        private int IndexValue;
 
         /// <summary>
         /// 初始化 <see cref="EnumListView{TEnum}"/> 类的新实例。
@@ -27,43 +27,41 @@ namespace XstarS.ComponentModel
         }
 
         /// <summary>
-        /// 获取或设置当前选中的枚举值的索引。
+        /// 获取或设置当前视图表示的枚举值的索引。
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/>
-        /// 不在 -1 和 <see cref="Collection{T}.Count"/> - 1 之间。</exception>
-        public int SelectedIndex
+        public int Index
         {
-            get => this.SelectedIndexValue;
-            set => this.SetSelectedIndex(value);
+            get => this.IndexValue;
+            set => this.SetIndex(value);
         }
 
         /// <summary>
-        /// 获取或设置当前选中的枚举值。
+        /// 获取或设置当前视图表示的枚举值。
         /// </summary>
-        public TEnum SelectedItem
+        public TEnum Value
         {
-            get => this[this.SelectedIndex];
-            set => this.SelectedIndex = this.IndexOf(value);
+            get => this[this.Index];
+            set => this.Index = this.IndexOf(value);
         }
 
         /// <summary>
-        /// 设置当前选中的枚举值的索引。
+        /// 设置当前视图表示的枚举值的索引。
         /// </summary>
-        /// <param name="index">要设置的选中的枚举值的索引。</param>
+        /// <param name="index">要设置的枚举值的索引。</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/>
         /// 不在 -1 和 <see cref="Collection{T}.Count"/> - 1 之间。</exception>
-        protected virtual void SetSelectedIndex(int index)
+        protected virtual void SetIndex(int index)
         {
             if (index == -1) { index = 0; }
             if ((index < 0) || (index >= this.Count))
             {
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
-            this.SelectedIndexValue = index;
+            this.IndexValue = index;
             this.OnPropertyChanged(
-                new PropertyChangedEventArgs(nameof(this.SelectedIndex)));
+                new PropertyChangedEventArgs(nameof(this.Index)));
             this.OnPropertyChanged(
-                new PropertyChangedEventArgs(nameof(this.SelectedItem)));
+                new PropertyChangedEventArgs(nameof(this.Value)));
         }
     }
 }

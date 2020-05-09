@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Windows.Media;
 using XstarS.ComponentModel;
@@ -29,15 +28,16 @@ namespace XstarS.WaveGenerator.Views
         public MainWindowModel()
         {
             this.WaveformView = new EnumVectorView<Waveform>();
-            this.WaveformView.Value = Waveform.Sine;
+            this.WaveformView[Waveform.Sine] = true;
             this.WaveFrequency = 440;
             this.HasLeftChannel = true;
             this.HasRightChannel = true;
             this.WavePlayer = new MediaPlayer();
-            this.WavePlayer.MediaEnded += this.WavePlayer_MediaEnded;
-            this.WavePlayer.MediaFailed += this.WavePlayer_MediaEnded;
+            this.WavePlayer.MediaEnded += this.OnWaveEnded;
+            this.WavePlayer.MediaFailed += this.OnWaveEnded;
             this.GenerateWaveCommand = new DelegateCommand(
-                _ => this.GenerateWave(), _ => this.CanGenerateWave);
+                _ => this.GenerateWave(), _ => this.CanGenerateWave
+                ).ObserveCanExecute(this, nameof(this.CanGenerateWave));
             this.CanGenerateWave = true;
         }
 
@@ -124,11 +124,11 @@ namespace XstarS.WaveGenerator.Views
         }
 
         /// <summary>
-        /// <see cref="MainWindowModel.WavePlayer"/> 媒体播放完成的事件处理。
+        /// 每当波形声音播放完成时调用。
         /// </summary>
         /// <param name="sender">事件源。</param>
         /// <param name="e">提供事件数据的对象。</param>
-        private void WavePlayer_MediaEnded(object sender, EventArgs e)
+        private void OnWaveEnded(object sender, EventArgs e)
         {
             this.WavePlayer.Close();
             File.Delete(this.TempWavePath);
@@ -141,7 +141,9 @@ namespace XstarS.WaveGenerator.Views
         /// <returns>当前模型表示的波形声音的波形参数。</returns>
         public WaveParameters GetWaveParameters()
         {
-            return new WaveParameters(this.WaveformView.Value, 1.0, this.WaveFrequency);
+            var amplitude = 1.0;
+            return new WaveParameters(
+                this.WaveformView.Value, amplitude, this.WaveFrequency);
         }
 
         /// <summary>
@@ -169,16 +171,6 @@ namespace XstarS.WaveGenerator.Views
                 {
                     this.SetErrors(null, propertyName);
                 }
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-            if (e.PropertyName == nameof(this.CanGenerateWave))
-            {
-                this.GenerateWaveCommand.NotifyCanExecuteChanged();
             }
         }
     }

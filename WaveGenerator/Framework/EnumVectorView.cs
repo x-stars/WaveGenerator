@@ -29,7 +29,7 @@ namespace XstarS.ComponentModel
         }
 
         /// <summary>
-        /// 获取当前视图表示的枚举值。
+        /// 获取或设置当前视图表示的枚举值。
         /// </summary>
         public TEnum Value
         {
