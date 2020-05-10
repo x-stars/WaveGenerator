@@ -14,9 +14,9 @@
         /// </summary>
         internal const int ChunkSize = 4;
         /// <summary>
-        /// 表示文件格式的偏移量。
+        /// 表示文件格式 ID 的偏移量。
         /// </summary>
-        internal const int Format = 8;
+        internal const int FormatID = 8;
         /// <summary>
         /// 表示格式区块 ID 的偏移量。
         /// </summary>

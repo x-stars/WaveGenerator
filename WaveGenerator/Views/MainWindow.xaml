@@ -3,13 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:xswd="clr-namespace:XstarS.Windows.Data"
+        xmlns:xswdt="clr-namespace:XstarS.Windows.Data"
         xmlns:local="clr-namespace:XstarS.WaveGenerator.Views"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance local:MainWindowModel}"
         Height="100" Width="480" ResizeMode="NoResize"
         Title="WaveGenerator">
     <Window.Resources>
-        <xswd:LogarithmConverter x:Key="LogarithmConverter"/>
+        <xswdt:LogarithmConverter x:Key="LogarithmConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -59,7 +59,7 @@
                     <TextBlock Grid.Column="1" Margin="5" VerticalAlignment="Center" Text="Hz"/>
                 </Grid>
             </Grid>
-            <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
                     <ColumnDefinition Width="1*"/>

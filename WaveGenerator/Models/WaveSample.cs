@@ -18,25 +18,18 @@ namespace XstarS.WaveGenerator.Models
         /// <summary>
         /// 使用采样点数据初始化 <see cref="WaveSample"/> 结构的新实例。
         /// </summary>
+        /// <param name="data">采样点数据的字节数组。</param>
+        /// <param name="format">采样点的波形声音格式。</param>
         /// <param name="channels">采样点的声道数量。</param>
         /// <param name="bitDepth">采样点的采样位深度。</param>
-        /// <param name="data">采样点数据的字节数组。</param>
-        private WaveSample(WaveChannels channels, WaveBitDepth bitDepth, byte[] data)
+        private WaveSample(byte[] data,
+            WaveFormat format, WaveChannels channels, WaveBitDepth bitDepth)
         {
+            this.Data = data;
+            this.Format = format;
             this.Channels = channels;
             this.BitDepth = bitDepth;
-            this.Data = data;
         }
-
-        /// <summary>
-        /// 获取当前采样点的声道数量。
-        /// </summary>
-        public WaveChannels Channels { get; }
-
-        /// <summary>
-        /// 获取当前采样点的采样位深度。
-        /// </summary>
-        public WaveBitDepth BitDepth { get; }
 
         /// <summary>
         /// 获取当前采样点的字节序列数据。
@@ -49,14 +42,28 @@ namespace XstarS.WaveGenerator.Models
         public int Length => this.Data.Length;
 
         /// <summary>
+        /// 获取当前采样点的波形声音格式。
+        /// </summary>
+        public WaveFormat Format { get; }
+
+        /// <summary>
+        /// 获取当前采样点的声道数量。
+        /// </summary>
+        public WaveChannels Channels { get; }
+
+        /// <summary>
+        /// 获取当前采样点的采样位深度。
+        /// </summary>
+        public WaveBitDepth BitDepth { get; }
+
+        /// <summary>
         /// 以指定的 8 位整数序列为各声道的采样值创建 <see cref="WaveSample"/> 结构的实例。
         /// </summary>
         /// <param name="values">作为各声道的采样值的 8 位整数序列。</param>
         /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
-        [CLSCompliant(false)]
-        public static unsafe WaveSample Int8(params sbyte[] values)
+        public static unsafe WaveSample Int8(params byte[] values)
         {
             if (values is null)
             {
@@ -64,19 +71,20 @@ namespace XstarS.WaveGenerator.Models
             }
 
             var channels = values.Length;
-            var data = new byte[channels * sizeof(sbyte)];
-            fixed (sbyte* pValue = values)
+            var data = new byte[channels * sizeof(byte)];
+            fixed (byte* pValue = values)
             {
                 fixed (byte* pData = data)
                 {
-                    var tpData = (sbyte*)pData;
+                    var tpData = (byte*)pData;
                     for (int i = 0; i < channels; i++)
                     {
                         tpData[i] = pValue[i];
                     }
                 }
             }
-            return new WaveSample((WaveChannels)channels, WaveBitDepth.Int8, data);
+            return new WaveSample(data,
+                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit8);
         }
 
         /// <summary>
@@ -106,7 +114,8 @@ namespace XstarS.WaveGenerator.Models
                     }
                 }
             }
-            return new WaveSample((WaveChannels)channels, WaveBitDepth.Int16, data);
+            return new WaveSample(data,
+                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit16);
         }
 
         /// <summary>
@@ -136,7 +145,39 @@ namespace XstarS.WaveGenerator.Models
                     }
                 }
             }
-            return new WaveSample((WaveChannels)channels, WaveBitDepth.Int24, data);
+            return new WaveSample(data,
+                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit24);
+        }
+
+        /// <summary>
+        /// 以指定的 32 位整数序列为各声道的采样值创建 <see cref="WaveSample"/> 结构的实例。
+        /// </summary>
+        /// <param name="values">作为各声道的采样值的 32 位整数序列。</param>
+        /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
+        public static unsafe WaveSample Int32(params int[] values)
+        {
+            if (values is null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+
+            var channels = values.Length;
+            var data = new byte[channels * sizeof(int)];
+            fixed (int* pValue = values)
+            {
+                fixed (byte* pData = data)
+                {
+                    var tpData = (int*)pData;
+                    for (int i = 0; i < channels; i++)
+                    {
+                        tpData[i] = pValue[i];
+                    }
+                }
+            }
+            return new WaveSample(data,
+                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit32);
         }
 
         /// <summary>
@@ -166,7 +207,8 @@ namespace XstarS.WaveGenerator.Models
                     }
                 }
             }
-            return new WaveSample((WaveChannels)channels, WaveBitDepth.Float32, data);
+            return new WaveSample(data,
+                WaveFormat.IEEEFloat, (WaveChannels)channels, WaveBitDepth.Bit32);
         }
 
         /// <summary>

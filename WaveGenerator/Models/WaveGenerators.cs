@@ -17,7 +17,7 @@ namespace XstarS.WaveGenerator.Models
         /// <paramref name="waveWriter"/> 为 <see langword="null"/>，
         /// 或 <paramref name="parameters"/> 为默认值。</exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="durationSeconds"/> 为负数。</exception>
+        /// <paramref name="durationSeconds"/> 为负数，或枚举值不为定义的值。</exception>
         public static void GenerateWave(WaveStreamWriter waveWriter,
             WaveParameters parameters, double durationSeconds)
         {
@@ -36,7 +36,7 @@ namespace XstarS.WaveGenerator.Models
         /// 或 <paramref name="channelEnables"/> 为 <see langword="null"/>，
         /// 或 <paramref name="parameters"/> 为默认值。</exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="durationSeconds"/> 为负数。</exception>
+        /// <paramref name="durationSeconds"/> 为负数，或枚举值不为定义的值。</exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="channelEnables"/> 的数量与声道数量不匹配。</exception>
         public static void GenerateWave(WaveStreamWriter waveWriter,
@@ -67,10 +67,17 @@ namespace XstarS.WaveGenerator.Models
             var peek = parameters.Amplitude;
             switch (waveWriter.BitDepth)
             {
-                case WaveBitDepth.Int8: peek *= sbyte.MaxValue; break;
-                case WaveBitDepth.Int16: peek *= short.MaxValue; break;
-                case WaveBitDepth.Int24: peek *= Int24.MaxValue; break;
-                case WaveBitDepth.Float32: peek *= float.MaxValue; break;
+                case WaveBitDepth.Bit8: peek *= sbyte.MaxValue; break;
+                case WaveBitDepth.Bit16: peek *= short.MaxValue; break;
+                case WaveBitDepth.Bit24: peek *= Int24.MaxValue; break;
+                case WaveBitDepth.Bit32:
+                    switch (waveWriter.Format)
+                    {
+                        case WaveFormat.PCM: peek *= int.MaxValue; break;
+                        case WaveFormat.IEEEFloat: peek *= 1.0; break;
+                        default: throw new ArgumentOutOfRangeException();
+                    }
+                    break;
                 default: throw new ArgumentOutOfRangeException();
             }
 
@@ -97,21 +104,32 @@ namespace XstarS.WaveGenerator.Models
                 var sample = default(WaveSample);
                 switch (waveWriter.BitDepth)
                 {
-                    case WaveBitDepth.Int8:
+                    case WaveBitDepth.Bit8:
                         sample = WaveSample.Int8(channels.InitializeArray(
-                            channel => (sbyte)(channelEnables[channel] ? value : 0.0)));
+                            channel => (byte)((channelEnables[channel] ? value : 0.0) - sbyte.MinValue)));
                         break;
-                    case WaveBitDepth.Int16:
+                    case WaveBitDepth.Bit16:
                         sample = WaveSample.Int16(channels.InitializeArray(
                             channel => (short)(channelEnables[channel] ? value : 0.0)));
                         break;
-                    case WaveBitDepth.Int24:
+                    case WaveBitDepth.Bit24:
                         sample = WaveSample.Int24(channels.InitializeArray(
                             channel => (Int24)(channelEnables[channel] ? value : 0.0)));
                         break;
-                    case WaveBitDepth.Float32:
-                        sample = WaveSample.Float32(channels.InitializeArray(
-                            channel => (float)(channelEnables[channel] ? value : 0.0)));
+                    case WaveBitDepth.Bit32:
+                        switch (waveWriter.Format)
+                        {
+                            case WaveFormat.PCM:
+                                sample = WaveSample.Int32(channels.InitializeArray(
+                                    channel => (int)(channelEnables[channel] ? value : 0.0)));
+                                break;
+                            case WaveFormat.IEEEFloat:
+                                sample = WaveSample.Float32(channels.InitializeArray(
+                                    channel => (float)(channelEnables[channel] ? value : 0.0)));
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

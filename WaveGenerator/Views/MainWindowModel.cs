@@ -107,11 +107,11 @@ namespace XstarS.WaveGenerator.Views
             if (!this.CanGenerateWave) { return; }
             this.CanGenerateWave = false;
 
-            var path = this.TempWavePath;
-            using (var file = File.OpenWrite(path))
+            var wavePath = this.TempWavePath;
+            using (var waveFile = File.OpenWrite(wavePath))
             {
-                using (var waveWriter = new WaveStreamWriter(
-                    file, sampleRate: WaveSampleRate.Hz48000))
+                using (var waveWriter = new WaveStreamWriter(waveFile,
+                    sampleRate: WaveSampleRate.Hz48000))
                 {
                     var durationSeconds = 1.0;
                     WaveGenerators.GenerateWave(
@@ -120,8 +120,8 @@ namespace XstarS.WaveGenerator.Views
                 }
             }
 
-            var uri = new Uri(path);
-            this.WavePlayer.Open(uri);
+            var waveUri = new Uri(wavePath);
+            this.WavePlayer.Open(waveUri);
             this.WavePlayer.Volume = 1.0;
             this.WavePlayer.Play();
         }

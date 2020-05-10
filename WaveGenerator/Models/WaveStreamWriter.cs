@@ -11,19 +11,14 @@ namespace XstarS.WaveGenerator.Models
     public class WaveStreamWriter : IDisposable
     {
         /// <summary>
-        /// 表示 PCM 音频格式的常数值。
-        /// </summary>
-        private const short AudioFormatPCM = 1;
-
-        /// <summary>
         /// 表示波形声音的区块 ID 常数值。
         /// </summary>
         private static readonly byte[] ChunkID = Encoding.ASCII.GetBytes("RIFF");
 
         /// <summary>
-        /// 表示波形声音的文件格式常数值。
+        /// 表示波形声音的文件格式 ID 常数值。
         /// </summary>
-        private static readonly byte[] Format = Encoding.ASCII.GetBytes("WAVE");
+        private static readonly byte[] FormatID = Encoding.ASCII.GetBytes("WAVE");
 
         /// <summary>
         /// 表示波形声音的格式区块 ID 常数值。
@@ -46,8 +41,8 @@ namespace XstarS.WaveGenerator.Models
         /// <param name="stream">要写入波形声音的流。</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="stream"/> 为 <see langword="null"/>。</exception>
-        public WaveStreamWriter(Stream stream) : this(
-            stream, WaveChannels.Stereo, WaveSampleRate.Hz44100, WaveBitDepth.Int16)
+        public WaveStreamWriter(Stream stream) : this(stream,
+            WaveFormat.PCM, WaveChannels.Stereo, WaveSampleRate.Hz44100, WaveBitDepth.Bit16)
         {
         }
 
@@ -55,22 +50,33 @@ namespace XstarS.WaveGenerator.Models
         /// 以要写入的流和波形声音参数初始化 <see cref="WaveStreamWriter"/> 类的新实例。
         /// </summary>
         /// <param name="stream">要写入波形声音的流。</param>
+        /// <param name="format">波形声音的格式。</param>
         /// <param name="channels">波形声音的声道数量。</param>
         /// <param name="sampleRate">波形声音的采样率。</param>
         /// <param name="bitDepth">波形声音的采样位深度。</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="stream"/> 为 <see langword="null"/>。</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="format"/> 为 <see cref="WaveFormat.IEEEFloat"/>，
+        /// 但 <paramref name="bitDepth"/> 不为 <see cref="WaveBitDepth.Bit32"/>。</exception>
         public WaveStreamWriter(Stream stream,
+            WaveFormat format = WaveFormat.PCM,
             WaveChannels channels = WaveChannels.Stereo,
             WaveSampleRate sampleRate = WaveSampleRate.Hz44100,
-            WaveBitDepth bitDepth = WaveBitDepth.Int16)
+            WaveBitDepth bitDepth = WaveBitDepth.Bit16)
         {
             if (stream is null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
+            if ((format == WaveFormat.IEEEFloat) &&
+                (bitDepth != WaveBitDepth.Bit32))
+            {
+                throw new ArgumentOutOfRangeException(nameof(bitDepth));
+            }
 
             this.Stream = stream;
+            this.Format = format;
             this.Channels = channels;
             this.SampleRate = sampleRate;
             this.BitDepth = bitDepth;
@@ -81,6 +87,11 @@ namespace XstarS.WaveGenerator.Models
         /// 获取当前正在写入的流。
         /// </summary>
         public Stream Stream { get; }
+
+        /// <summary>
+        /// 获取当前波形声音的格式。
+        /// </summary>
+        public WaveFormat Format { get; }
 
         /// <summary>
         /// 获取当前波形声音的声道数量。
@@ -121,12 +132,12 @@ namespace XstarS.WaveGenerator.Models
             stream.Position = 0;
 
             stream.Write(WaveStreamWriter.ChunkID);
-            stream.Write(WaveFileOffsets.DataBlocks - WaveFileOffsets.Format);
-            stream.Write(WaveStreamWriter.Format);
+            stream.Write(WaveFileOffsets.DataBlocks - WaveFileOffsets.FormatID);
+            stream.Write(WaveStreamWriter.FormatID);
 
             stream.Write(WaveStreamWriter.FmtChunkID);
             stream.Write(WaveFileOffsets.DataChunkID - WaveFileOffsets.AudioFormat);
-            stream.Write(WaveStreamWriter.AudioFormatPCM);
+            stream.Write(this.Format);
             stream.Write(this.Channels);
             stream.Write(this.SampleRate);
             stream.Write(this.ByteRate);
@@ -144,14 +155,15 @@ namespace XstarS.WaveGenerator.Models
         /// <exception cref="ArgumentNullException">
         /// <paramref name="sample"/> 包含的数据为 <see langword="null"/>。</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="sample"/> 的声道数量或采样位深度与当前实例不匹配。</exception>
+        /// <paramref name="sample"/> 的音频格式或声道数量或采样位深度与当前实例不匹配。</exception>
         public void WriteSample(WaveSample sample)
         {
             if (sample == default)
             {
                 throw new ArgumentNullException(nameof(sample));
             }
-            if ((sample.Channels != this.Channels) ||
+            if ((sample.Format != this.Format) ||
+                (sample.Channels != this.Channels) ||
                 (sample.BitDepth != this.BitDepth))
             {
                 throw new ArgumentException(
@@ -169,7 +181,7 @@ namespace XstarS.WaveGenerator.Models
         /// <exception cref="ArgumentNullException"><paramref name="samples"/> 或
         /// <paramref name="samples"/> 包含的数据为 <see langword="null"/>。</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="samples"/> 的声道数量或采样位深度与当前实例不匹配。</exception>
+        /// <paramref name="samples"/> 的音频格式或声道数量或采样位深度与当前实例不匹配。</exception>
         public void WriteSamples(WaveSample[] samples)
         {
             foreach (var sample in samples)
@@ -209,7 +221,10 @@ namespace XstarS.WaveGenerator.Models
         /// <summary>
         /// 释放此实例占用的资源。
         /// </summary>
-        public void Dispose() { this.Dispose(true); }
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
 
         /// <summary>
         /// 释放当前实例占用的非托管资源，并根据指示释放托管资源。
