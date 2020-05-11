@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Input;
 
-namespace XstarS.ComponentModel
+namespace XstarS.Windows.Input
 {
     /// <summary>
     /// 表示由委托 <see cref="Delegate"/> 定义的命令 <see cref="ICommand"/>。
     /// </summary>
-    public sealed class DelegateCommand : CommandBase
+    public class DelegateCommand : CommandBase
     {
         /// <summary>
         /// 表示 <see cref="DelegateCommand.Execute(object)"/> 方法的委托。
@@ -19,11 +17,6 @@ namespace XstarS.ComponentModel
         /// 表示 <see cref="DelegateCommand.CanExecute(object)"/> 方法的委托。
         /// </summary>
         private readonly Predicate<object> CanExecuteDelegate;
-
-        /// <summary>
-        /// 表示当前接收属性更改通知的 <see cref="INotifyPropertyChanged"/> 对象的属性的名称。
-        /// </summary>
-        private readonly Dictionary<object, HashSet<string>> SourcePropertyNames;
 
         /// <summary>
         /// 使用指定的委托初始化 <see cref="DelegateCommand"/> 类的新实例。
@@ -37,7 +30,6 @@ namespace XstarS.ComponentModel
             this.ExecuteDelegate = executeDelegate ??
                 throw new ArgumentNullException(nameof(executeDelegate));
             this.CanExecuteDelegate = base.CanExecute;
-            this.SourcePropertyNames = new Dictionary<object, HashSet<string>>();
         }
 
         /// <summary>
@@ -56,7 +48,6 @@ namespace XstarS.ComponentModel
                 throw new ArgumentNullException(nameof(executeDelegate));
             this.CanExecuteDelegate = canExecuteDelegate ??
                 throw new ArgumentNullException(nameof(canExecuteDelegate));
-            this.SourcePropertyNames = new Dictionary<object, HashSet<string>>();
         }
 
         /// <summary>
@@ -85,49 +76,6 @@ namespace XstarS.ComponentModel
         public new void NotifyCanExecuteChanged()
         {
             base.NotifyCanExecuteChanged();
-        }
-
-        /// <summary>
-        /// 设定在指定 <see cref="INotifyPropertyChanged"/> 对象的指定名称的属性发生更改时引发
-        /// <see cref="CommandBase.CanExecuteChanged"/> 事件。
-        /// </summary>
-        /// <param name="source">发出通知的 <see cref="INotifyPropertyChanged"/> 对象。</param>
-        /// <param name="propertyName">要接收更改通知的属性的名称。</param>
-        /// <returns>当前 <see cref="DelegateCommand"/> 实例。</returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> 为 <see langword="null"/>。</exception>
-        public DelegateCommand ObserveCanExecute(
-            INotifyPropertyChanged source, string propertyName)
-        {
-            source = source ?? throw new ArgumentNullException(nameof(source));
-            propertyName = propertyName ?? string.Empty;
-            var sourcePropertyNames = this.SourcePropertyNames;
-            if (!sourcePropertyNames.ContainsKey(source))
-            {
-                sourcePropertyNames[source] = new HashSet<string>();
-                source.PropertyChanged += this.OnSourcePropertyChanged;
-            }
-            sourcePropertyNames[source].Add(propertyName);
-            return this;
-        }
-
-        /// <summary>
-        /// 每当接收属性更改通知的 <see cref="INotifyPropertyChanged"/> 对象的
-        /// <see cref="INotifyPropertyChanged.PropertyChanged"/> 事件发生时调用。
-        /// </summary>
-        /// <param name="sender">作为事件源的 <see cref="INotifyPropertyChanged"/>。</param>
-        /// <param name="e">提供事件数据的 <see cref="PropertyChangedEventArgs"/>。</param>
-        private void OnSourcePropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var propertyName = e.PropertyName ?? string.Empty;
-            var sourcePropertyNames = this.SourcePropertyNames;
-            if (sourcePropertyNames.ContainsKey(sender))
-            {
-                if (sourcePropertyNames[sender].Contains(propertyName))
-                {
-                    this.NotifyCanExecuteChanged();
-                }
-            }
         }
     }
 }

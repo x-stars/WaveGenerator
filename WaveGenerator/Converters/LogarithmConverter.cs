@@ -9,7 +9,7 @@ namespace XstarS.Windows.Data
     /// </summary>
     [ValueConversion(typeof(IConvertible), typeof(IConvertible),
         ParameterType = typeof(IConvertible))]
-    public class LogarithmConverter : IValueConverter
+    public sealed class LogarithmConverter : IValueConverter
     {
         /// <summary>
         /// 初始化 <see cref="LogarithmConverter"/> 类的新实例。

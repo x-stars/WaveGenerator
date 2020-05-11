@@ -9,7 +9,7 @@ namespace XstarS.Windows.Data
     /// </summary>
     [ValueConversion(typeof(IConvertible), typeof(IConvertible),
         ParameterType = typeof(IConvertible))]
-    public class ExponentiationConverter : IValueConverter
+    public sealed class ExponentiationConverter : IValueConverter
     {
         /// <summary>
         /// 初始化 <see cref="ExponentiationConverter"/> 类的新实例。

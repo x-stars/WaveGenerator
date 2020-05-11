@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using XstarS.ComponentModel;
 using XstarS.WaveGenerator.Models;
+using XstarS.Windows.Input;
 
 namespace XstarS.WaveGenerator.Views
 {
@@ -37,8 +38,7 @@ namespace XstarS.WaveGenerator.Views
             this.WavePlayer.MediaEnded += this.OnWaveEnded;
             this.WavePlayer.MediaFailed += this.OnWaveEnded;
             this.GenerateWaveCommand = new DelegateCommand(
-                _ => this.GenerateWave(), _ => this.CanGenerateWave
-                ).ObserveCanExecute(this, nameof(this.CanGenerateWave));
+                _ => this.GenerateWave(), _ => this.CanGenerateWave);
             this.CanGenerateWave = true;
         }
 
@@ -158,7 +158,26 @@ namespace XstarS.WaveGenerator.Views
             return new[] { this.HasLeftChannel, this.HasRightChannel };
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// 设置指定属性的值。
+        /// </summary>
+        /// <typeparam name="T">属性的类型。</typeparam>
+        /// <param name="value">属性的新值。</param>
+        /// <param name="propertyName">要设置值的属性的名称。</param>
+        protected override void SetProperty<T>(T value,
+            [CallerMemberName] string propertyName = null)
+        {
+            base.SetProperty(value, propertyName);
+            if (propertyName == nameof(this.CanGenerateWave))
+            {
+                this.GenerateWaveCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        /// <summary>
+        /// 验证指定属性的错误。
+        /// </summary>
+        /// <param name="propertyName">要验证错误的属性的名称。</param>
         protected override void ValidateProperty(
             [CallerMemberName] string propertyName = null)
         {
