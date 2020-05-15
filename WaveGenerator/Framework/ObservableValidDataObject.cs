@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
 namespace XstarS.ComponentModel
@@ -55,13 +57,15 @@ namespace XstarS.ComponentModel
         /// </summary>
         /// <param name="errors">属性的验证错误。</param>
         /// <param name="propertyName">要设置验证错误的属性的名称。</param>
-        protected void SetErrors(IEnumerable errors,
+        protected virtual void SetErrors(IEnumerable errors,
             [CallerMemberName] string propertyName = null)
         {
             propertyName = propertyName ?? string.Empty;
-            if (!(errors is null)) { this.PropertiesErrors[propertyName] = errors; }
+            var hasErrors = !(errors is null) && errors.GetEnumerator().MoveNext();
+            if (hasErrors) { this.PropertiesErrors[propertyName] = errors; }
             else { this.PropertiesErrors.TryRemove(propertyName, out errors); }
             this.NotifyErrorsChanged(propertyName);
+            this.NotifyPropertyChanged(nameof(this.HasErrors));
         }
 
         /// <summary>
@@ -85,6 +89,14 @@ namespace XstarS.ComponentModel
         protected virtual void ValidateProperty(
             [CallerMemberName] string propertyName = null)
         {
+            propertyName = propertyName ?? string.Empty;
+            var value = this.GetProperty<object>(propertyName);
+            var context = new ValidationContext(this) { MemberName = propertyName };
+            var results = new List<ValidationResult>();
+            Validator.TryValidateProperty(value, context, results);
+            var errors = new List<string>(results.Count);
+            foreach (var result in results) { errors.Add(result.ErrorMessage); }
+            this.SetErrors(errors, propertyName);
         }
 
         /// <summary>

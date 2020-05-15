@@ -1,6 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using XstarS.ComponentModel;
 using XstarS.WaveGenerator.Models;
@@ -48,18 +48,19 @@ namespace XstarS.WaveGenerator.Views
         public EnumVectorView<Waveform> WaveformView { get; }
 
         /// <summary>
-        /// 表示波形声音允许的最小频率。
+        /// 获取波形声音允许的最小频率。
         /// </summary>
         public double MinWaveFrequency => 16.0;
 
         /// <summary>
-        /// 表示波形声音允许的最大频率。
+        /// 获取波形声音允许的最大频率。
         /// </summary>
         public double MaxWaveFrequency => 24000.0;
 
         /// <summary>
         /// 获取或设置波形声音的频率。
         /// </summary>
+        [Range(16.0, 24000.0)]
         public double WaveFrequency
         {
             get => this.GetProperty<double>();
@@ -90,7 +91,11 @@ namespace XstarS.WaveGenerator.Views
         public bool CanGenerateWave
         {
             get => this.GetProperty<bool>();
-            set => this.SetProperty(value);
+            set
+            {
+                this.SetProperty(value);
+                this.GenerateWaveCommand.NotifyCanExecuteChanged();
+            }
         }
 
         /// <summary>
@@ -156,45 +161,6 @@ namespace XstarS.WaveGenerator.Views
         public bool[] GetChannelEnables()
         {
             return new[] { this.HasLeftChannel, this.HasRightChannel };
-        }
-
-        /// <summary>
-        /// 设置指定属性的值。
-        /// </summary>
-        /// <typeparam name="T">属性的类型。</typeparam>
-        /// <param name="value">属性的新值。</param>
-        /// <param name="propertyName">要设置值的属性的名称。</param>
-        protected override void SetProperty<T>(T value,
-            [CallerMemberName] string propertyName = null)
-        {
-            base.SetProperty(value, propertyName);
-            if (propertyName == nameof(this.CanGenerateWave))
-            {
-                this.GenerateWaveCommand.NotifyCanExecuteChanged();
-            }
-        }
-
-        /// <summary>
-        /// 验证指定属性的错误。
-        /// </summary>
-        /// <param name="propertyName">要验证错误的属性的名称。</param>
-        protected override void ValidateProperty(
-            [CallerMemberName] string propertyName = null)
-        {
-            base.ValidateProperty(propertyName);
-            if (propertyName == nameof(this.WaveFrequency))
-            {
-                if ((this.WaveFrequency < this.MinWaveFrequency) ||
-                    (this.WaveFrequency > this.MaxWaveFrequency))
-                {
-                    var errors = new[] { new ArgumentOutOfRangeException().Message };
-                    this.SetErrors(errors, propertyName);
-                }
-                else
-                {
-                    this.SetErrors(null, propertyName);
-                }
-            }
         }
     }
 }
