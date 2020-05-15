@@ -3,13 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveGenerator", "WaveGenerator\WaveGenerator.csproj", "{D47FA0C1-35F3-41D1-8E02-BAD2CE39F499}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{4AFA44E8-3C4A-4925-BE1E-1B59DF1EB916}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepositoryFiles", "RepositoryFiles", "{1BA89134-7F42-421D-9986-AC246BE967E2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepositoryItems", "RepositoryItems", "{1BA89134-7F42-421D-9986-AC246BE967E2}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveGenerator", "WaveGenerator\WaveGenerator.csproj", "{D47FA0C1-35F3-41D1-8E02-BAD2CE39F499}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
