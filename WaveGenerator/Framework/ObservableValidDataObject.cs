@@ -93,7 +93,7 @@ namespace XstarS.ComponentModel
             var value = this.GetProperty<object>(propertyName);
             var context = new ValidationContext(this) { MemberName = propertyName };
             var results = new List<ValidationResult>();
-            Validator.TryValidateProperty(value, context, results);
+            try { Validator.TryValidateProperty(value, context, results); } catch { }
             var errors = new List<string>(results.Count);
             foreach (var result in results) { errors.Add(result.ErrorMessage); }
             this.SetErrors(errors, propertyName);
