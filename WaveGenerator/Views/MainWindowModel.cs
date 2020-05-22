@@ -118,10 +118,9 @@ namespace XstarS.WaveGenerator.Views
                 using (var waveWriter = new WaveStreamWriter(waveFile,
                     sampleRate: WaveSampleRate.Hz48000))
                 {
-                    var durationSeconds = 1.0;
-                    WaveGenerators.GenerateWave(
+                    WaveformGenerator.GenerateWave(
                         waveWriter, this.GetWaveParameters(),
-                        this.GetChannelEnables(), durationSeconds);
+                        this.GetChannelEnables(), durationSeconds: 1.0);
                 }
             }
 
@@ -147,11 +146,10 @@ namespace XstarS.WaveGenerator.Views
         /// 获取当前模型表示的波形声音的波形参数。
         /// </summary>
         /// <returns>当前模型表示的波形声音的波形参数。</returns>
-        public WaveParameters GetWaveParameters()
+        public WaveformParameters GetWaveParameters()
         {
-            var amplitude = 1.0;
-            return new WaveParameters(
-                this.WaveformView.Value, amplitude, (double)this.WaveFrequency);
+            return new WaveformParameters(
+                this.WaveformView.Value, amplitude: 1.0, (double)this.WaveFrequency);
         }
 
         /// <summary>

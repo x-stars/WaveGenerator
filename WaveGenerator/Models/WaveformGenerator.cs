@@ -5,7 +5,7 @@ namespace XstarS.WaveGenerator.Models
     /// <summary>
     /// 提供生成特定频率的波形声音的方法。
     /// </summary>
-    public static class WaveGenerators
+    public static class WaveformGenerator
     {
         /// <summary>
         /// 生成指定持续时间的具有指定波形参数的波形声音，并输出到指定的波形声音流。
@@ -19,9 +19,9 @@ namespace XstarS.WaveGenerator.Models
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="durationSeconds"/> 为负数，或枚举值不为定义的值。</exception>
         public static void GenerateWave(WaveStreamWriter waveWriter,
-            WaveParameters parameters, double durationSeconds)
+            WaveformParameters parameters, double durationSeconds)
         {
-            WaveGenerators.GenerateWave(waveWriter, parameters,
+            WaveformGenerator.GenerateWave(waveWriter, parameters,
                 ((int)waveWriter.Channels).InitializeArray(_ => true), durationSeconds);
         }
 
@@ -40,7 +40,7 @@ namespace XstarS.WaveGenerator.Models
         /// <exception cref="ArgumentException">
         /// <paramref name="channelEnables"/> 的数量与声道数量不匹配。</exception>
         public static void GenerateWave(WaveStreamWriter waveWriter,
-            WaveParameters parameters, bool[] channelEnables, double durationSeconds)
+            WaveformParameters parameters, bool[] channelEnables, double durationSeconds)
         {
             if (waveWriter is null)
             {
@@ -83,13 +83,13 @@ namespace XstarS.WaveGenerator.Models
 
             var count = (int)(durationSeconds * (int)waveWriter.SampleRate);
 
-            var waveFunc = default(WaveFunction);
+            var waveFunc = default(WaveformFunction);
             switch (parameters.Waveform)
             {
-                case Waveform.Sine: waveFunc = WaveFunctions.Sine; break;
-                case Waveform.Square: waveFunc = WaveFunctions.Square; break;
-                case Waveform.Triangle: waveFunc = WaveFunctions.Triangle; break;
-                case Waveform.Sawtooth: waveFunc = WaveFunctions.Sawtooth; break;
+                case Waveform.Sine: waveFunc = WaveformFunctions.Sine; break;
+                case Waveform.Square: waveFunc = WaveformFunctions.Square; break;
+                case Waveform.Triangle: waveFunc = WaveformFunctions.Triangle; break;
+                case Waveform.Sawtooth: waveFunc = WaveformFunctions.Sawtooth; break;
                 default: throw new ArgumentOutOfRangeException();
             }
 
