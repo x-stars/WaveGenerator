@@ -31,6 +31,8 @@ namespace XstarS.ComponentModel
         /// <summary>
         /// 获取当前实体是否包含验证错误。
         /// </summary>
+        /// <returns>如果实体当前具有验证错误，
+        /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
         public bool HasErrors => !this.PropertiesErrors.IsEmpty;
 
         /// <summary>
