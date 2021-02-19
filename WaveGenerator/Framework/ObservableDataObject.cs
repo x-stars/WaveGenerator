@@ -59,8 +59,10 @@ namespace XstarS.ComponentModel
             [CallerMemberName] string propertyName = null)
         {
             propertyName = propertyName ?? string.Empty;
+            var property = this.GetProperty<T>(propertyName);
             this.Properties[propertyName] = (object)value;
-            this.NotifyPropertyChanged(propertyName);
+            var propertyChanged = !RuntimeHelpers.Equals(property, value);
+            if (propertyChanged) { this.NotifyPropertyChanged(propertyName); }
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace XstarS.Windows.Input
@@ -76,6 +77,63 @@ namespace XstarS.Windows.Input
         public new void NotifyCanExecuteChanged()
         {
             base.NotifyCanExecuteChanged();
+        }
+
+        /// <summary>
+        /// 设定在指定属性发生更改时，通知当前命令的可执行状态已更改。
+        /// </summary>
+        /// <param name="source">发出属性更改通知的事件源对象。</param>
+        /// <param name="propertyName">要接收更改通知的属性的名称。</param>
+        /// <returns>当前 <see cref="DelegateCommand"/> 实例。</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> 为 <see langword="null"/>。</exception>
+        public DelegateCommand ObserveCanExecute(
+            INotifyPropertyChanged source, string propertyName)
+        {
+            if (source is null) { throw new ArgumentNullException(nameof(source)); }
+            var observer = new CanExecuteObserver(this, propertyName);
+            source.PropertyChanged += observer.OnPropertyChanged;
+            return this;
+        }
+
+        /// <summary>
+        /// 提供在属性发生更改时，通知命令的可执行状态发生更改的方法。
+        /// </summary>
+        private sealed class CanExecuteObserver
+        {
+            /// <summary>
+            /// 表示要通知的可执行状态已更改的命令。
+            /// </summary>
+            private readonly DelegateCommand Command;
+
+            /// <summary>
+            /// 表示要接收更改通知的属性的名称。
+            /// </summary>
+            private readonly string PropertyName;
+
+            /// <summary>
+            /// 使用命令和属性的名称初始化 <see cref="CanExecuteObserver"/> 类的新实例。
+            /// </summary>
+            /// <param name="command">要通知的可执行状态已更改的命令。</param>
+            /// <param name="propertyName">要接收更改通知的属性的名称。</param>
+            public CanExecuteObserver(DelegateCommand command, string propertyName)
+            {
+                this.Command = command;
+                this.PropertyName = propertyName;
+            }
+
+            /// <summary>
+            /// 当指定名称的属性发生更改时，通知命令的可执行状态发生更改。
+            /// </summary>
+            /// <param name="sender">属性更改通知的事件源。</param>
+            /// <param name="e">提供属性更改通知的事件数据。</param>
+            public void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == this.PropertyName)
+                {
+                    this.Command.NotifyCanExecuteChanged();
+                }
+            }
         }
     }
 }

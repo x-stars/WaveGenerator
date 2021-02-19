@@ -63,11 +63,15 @@ namespace XstarS.ComponentModel
             [CallerMemberName] string propertyName = null)
         {
             propertyName = propertyName ?? string.Empty;
+            var thisHadErrors = !this.PropertiesErrors.IsEmpty;
+            var hadErrors = !(this.GetErrors(propertyName) is null);
             var hasErrors = !(errors is null) && errors.GetEnumerator().MoveNext();
             if (hasErrors) { this.PropertiesErrors[propertyName] = errors; }
             else { this.PropertiesErrors.TryRemove(propertyName, out errors); }
-            this.NotifyErrorsChanged(propertyName);
-            this.NotifyPropertyChanged(nameof(this.HasErrors));
+            var errorsChanged = hadErrors ^ hasErrors;
+            if (errorsChanged) { this.NotifyErrorsChanged(propertyName); }
+            var hasErrorsChanged = thisHadErrors ^ this.HasErrors;
+            if (hasErrorsChanged) { this.NotifyPropertyChanged(nameof(this.HasErrors)); }
         }
 
         /// <summary>
@@ -81,18 +85,21 @@ namespace XstarS.ComponentModel
         {
             propertyName = propertyName ?? string.Empty;
             base.SetProperty(value, propertyName);
-            this.ValidateProperty(propertyName);
+            this.ValidateProperty<T>(propertyName);
         }
 
         /// <summary>
         /// 验证指定属性的错误。
         /// </summary>
+        /// <typeparam name="T">属性的类型。</typeparam>
         /// <param name="propertyName">要验证错误的属性的名称。</param>
-        protected virtual void ValidateProperty(
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        protected virtual void ValidateProperty<T>(
             [CallerMemberName] string propertyName = null)
         {
             propertyName = propertyName ?? string.Empty;
-            var value = this.GetProperty<object>(propertyName);
+            var value = this.GetProperty<T>(propertyName);
             var context = new ValidationContext(this) { MemberName = propertyName };
             var results = new List<ValidationResult>();
             try { Validator.TryValidateProperty(value, context, results); } catch { }

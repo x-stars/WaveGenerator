@@ -8,7 +8,7 @@ namespace XstarS.ComponentModel
     /// </summary>
     /// <typeparam name="TEnum">枚举的类型。</typeparam>
     [Serializable]
-    public class EnumVectorView<TEnum> : ObservableDataObject
+    public class EnumVectorView<TEnum> : EnumViewBase<TEnum>
         where TEnum : struct, Enum
     {
         /// <summary>
@@ -24,18 +24,8 @@ namespace XstarS.ComponentModel
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
         public bool this[TEnum enumValue]
         {
-            get => object.Equals(this.Value, enumValue);
-            set { if (value) { this.Value = enumValue; } }
-        }
-
-        /// <summary>
-        /// 获取或设置当前视图表示的枚举值。
-        /// </summary>
-        /// <returns>当前视图表示的枚举值。</returns>
-        public TEnum Value
-        {
-            get => this.GetProperty<TEnum>();
-            set => this.SetProperty(value);
+            get => this.Value.Equals(enumValue);
+            set => this.SetEnum(enumValue, value);
         }
 
         /// <summary>
@@ -50,7 +40,8 @@ namespace XstarS.ComponentModel
             [CallerMemberName] string enumName = null)
         {
             enumName = enumName ?? string.Empty;
-            return this[(TEnum)Enum.Parse(typeof(TEnum), enumName)];
+            var enumValue = this.ParseEnum(enumName);
+            return this[enumValue];
         }
 
         /// <summary>
@@ -60,29 +51,22 @@ namespace XstarS.ComponentModel
         /// <param name="enumName">要设置的枚举值的名称。</param>
         /// <exception cref="ArgumentException">
         /// <paramref name="enumName"/> 不为有效的枚举值名称。</exception>
-        protected virtual void SetEnum(bool value,
+        protected void SetEnum(bool value,
             [CallerMemberName] string enumName = null)
         {
             enumName = enumName ?? string.Empty;
-            this[(TEnum)Enum.Parse(typeof(TEnum), enumName)] = value;
+            var enumValue = this.ParseEnum(enumName);
+            this[enumValue] = value;
         }
 
         /// <summary>
-        /// 设置指定属性的值。
+        /// 根据指示设置当前视图表示的枚举值。
         /// </summary>
-        /// <typeparam name="T">属性的类型。</typeparam>
-        /// <param name="value">属性的新值。</param>
-        /// <param name="propertyName">要设置值的属性的名称。</param>
-        protected override void SetProperty<T>(T value,
-            [CallerMemberName] string propertyName = null)
+        /// <param name="enumValue">要设置的枚举值。</param>
+        /// <param name="value">指示是否设置枚举值。</param>
+        protected virtual void SetEnum(TEnum enumValue, bool value)
         {
-            base.SetProperty(value, propertyName);
-            if (propertyName == nameof(this.Value))
-            {
-                var enumNames = Enum.GetNames(typeof(TEnum));
-                Array.ForEach(enumNames, this.NotifyPropertyChanged);
-                this.NotifyPropertyChanged(ObservableDataObject.IndexerName);
-            }
+            if (value) { this.Value = enumValue; }
         }
     }
 }

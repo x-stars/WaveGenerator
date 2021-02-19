@@ -38,7 +38,8 @@ namespace XstarS.WaveGenerator.Views
             this.WavePlayer.MediaEnded += this.OnWaveEnded;
             this.WavePlayer.MediaFailed += this.OnWaveEnded;
             this.GenerateWaveCommand = new DelegateCommand(
-                _ => this.GenerateWave(), _ => this.CanGenerateWave);
+                _ => this.GenerateWave(), _ => this.CanGenerateWave)
+                .ObserveCanExecute(this, nameof(this.CanGenerateWave));
             this.CanGenerateWave = true;
         }
 
@@ -91,11 +92,7 @@ namespace XstarS.WaveGenerator.Views
         public bool CanGenerateWave
         {
             get => this.GetProperty<bool>();
-            set
-            {
-                this.SetProperty(value);
-                this.GenerateWaveCommand.NotifyCanExecuteChanged();
-            }
+            set => this.SetProperty(value);
         }
 
         /// <summary>
