@@ -1,20 +1,13 @@
 ﻿using System;
-using XstarS.Collections.Generic;
+using XstarS.Runtime;
 
 namespace XstarS.WaveGenerator.Models
 {
-    using BytesComparer = ArrayEqualityComparer<byte>;
-
     /// <summary>
     /// 表示一个波形声音的采样点。
     /// </summary>
     public struct WaveSample : IEquatable<WaveSample>
     {
-        /// <summary>
-        /// 表示用于 <see cref="WaveSample.Data"/> 的相等比较器。
-        /// </summary>
-        private static readonly BytesComparer DataComparer = BytesComparer.Default;
-
         /// <summary>
         /// 使用采样点数据初始化 <see cref="WaveSample"/> 结构的新实例。
         /// </summary>
@@ -219,9 +212,9 @@ namespace XstarS.WaveGenerator.Models
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
         public bool Equals(WaveSample other)
         {
-            return (this.Channels == other.Channels) &&
-                   (this.BitDepth == other.BitDepth) &&
-                   WaveSample.DataComparer.Equals(this.Data, other.Data);
+            return this.Channels == other.Channels &&
+                   this.BitDepth == other.BitDepth &&
+                   this.Data.BinaryEquals(other.Data);
         }
 
         /// <summary>
@@ -244,7 +237,7 @@ namespace XstarS.WaveGenerator.Models
             var hashCode = -223416172;
             hashCode = hashCode * -1521134295 + this.Channels.GetHashCode();
             hashCode = hashCode * -1521134295 + this.BitDepth.GetHashCode();
-            hashCode = hashCode * -1521134295 + WaveSample.DataComparer.GetHashCode(this.Data);
+            hashCode = hashCode * -1521134295 + this.Data.GetBinaryHashCode();
             return hashCode;
         }
 

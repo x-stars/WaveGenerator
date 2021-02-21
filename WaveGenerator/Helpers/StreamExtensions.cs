@@ -86,7 +86,7 @@ namespace XstarS.IO
         /// <param name="value">要写入的非托管数据。</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="stream"/> 为 <see langword="null"/>。</exception>
-        public static unsafe void Write<T>(this Stream stream, T value)
+        public static unsafe void Write<T>(this Stream stream, in T value)
             where T : unmanaged
         {
             if (stream is null)

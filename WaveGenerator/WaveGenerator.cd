@@ -1,21 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="XstarS.Windows.Data.ExponentiationConverter" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="9.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Converters\ExponentiationConverter.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="XstarS.Windows.Data.LogarithmConverter" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="11.25" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Converters\LogarithmConverter.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
   <Class Name="XstarS.Windows.Input.CommandBase" Collapsed="true">
     <Position X="2.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
@@ -32,21 +16,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="XstarS.ComponentModel.EnumFlagsVectorView&lt;TEnum&gt;" Collapsed="true">
-    <Position X="4.75" Y="3.25" Width="1.5" />
+    <Position X="2.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAQAAAAAAAAAAAACAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Framework\EnumFlagsVectorView.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="XstarS.ComponentModel.EnumListView&lt;TEnum&gt;" Collapsed="true">
-    <Position X="14.75" Y="0.5" Width="1.5" />
+    <Position X="9.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAAAAAAIAAAAIAAAAEAAAAAAAAAJAAAAAAAAA=</HashCode>
       <FileName>Framework\EnumListView.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="XstarS.ComponentModel.EnumVectorView&lt;TEnum&gt;" Collapsed="true">
-    <Position X="2.5" Y="3.25" Width="1.5" />
+    <Position X="4.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAAAAAACIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Framework\EnumVectorView.cs</FileName>
@@ -75,88 +59,37 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="XstarS.Collections.Generic.ArrayEqualityComparer&lt;T&gt;" Collapsed="true">
-    <Position X="11.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAACAgAAAIAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\ArrayEqualityComparer.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="XstarS.ArrayExtensions" Collapsed="true">
-    <Position X="13" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\ArrayExtensions.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="XstarS.IO.StreamExtensions" Collapsed="true">
-    <Position X="14.75" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAEAAAA=</HashCode>
-      <FileName>Helpers\StreamExtensions.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="XstarS.WaveGenerator.Models.WaveFileOffsets" Collapsed="true">
-    <Position X="9.5" Y="2.5" Width="1.5" />
+    <Position X="11.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAAAAAACBAAAAAAEAAAIAoAACABACAAAAAAAABEGAA=</HashCode>
       <FileName>Models\WaveFileOffsets.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="XstarS.WaveGenerator.Models.WaveformFunctions" Collapsed="true">
-    <Position X="11.25" Y="2.5" Width="1.5" />
+    <Position X="13" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAgAABAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Models\WaveformFunctions.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="XstarS.WaveGenerator.Models.WaveformGenerator" Collapsed="true">
-    <Position X="13" Y="2.5" Width="1.5" />
+    <Position X="9.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
       <FileName>Models\WaveformGenerator.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="XstarS.WaveGenerator.Models.WaveStreamWriter" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="14.75" Y="2.5" Width="1.5" />
+    <Position X="11.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAAAAAAACAAAAAAEAACABoAAKgIAAAAACAAAABEmAA=</HashCode>
       <FileName>Models\WaveStreamWriter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="XstarS.WaveGenerator.Views.MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="13" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Views\MainWindow.xaml.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="XstarS.WaveGenerator.Views.MainWindowModel" Collapsed="true">
-    <Position X="7" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>BIAAAgAAAAEAAABAAAACgAAAAAAAABIACAIAACIAAEA=</HashCode>
-      <FileName>Views\MainWindowModel.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="XstarS.WaveGenerator.App" Collapsed="true">
-    <Position X="9.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>App.xaml.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Struct Name="XstarS.Int24" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="9.5" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AIIjAEKAAAAAFw4E4BWLJgJAAG0AIMJAAEBgIBAINzA=</HashCode>
-      <FileName>Primitives\Int24.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Struct>
   <Struct Name="XstarS.WaveGenerator.Models.WaveformParameters" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="11.25" Y="3.75" Width="1.5" />
+    <Position X="9.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAgAQAAAAAAIAAAIAAAAABAAAAAiA=</HashCode>
       <FileName>Models\WaveformParameters.cs</FileName>
@@ -164,50 +97,50 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Struct>
   <Struct Name="XstarS.WaveGenerator.Models.WaveSample" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="13" Y="3.75" Width="1.5" />
+    <Position X="11.25" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gAAAAAAAAAAAAAAAkAAAAABAIAoAAJCAEEAAAAAAEiA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAkAAAAABAIAoAAJCAEEAAAAAAEiA=</HashCode>
       <FileName>Models\WaveSample.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Struct>
   <Enum Name="XstarS.WaveGenerator.Models.WaveBitDepth" Collapsed="true">
-    <Position X="9.5" Y="5" Width="1.5" />
+    <Position X="9.5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAQAAAAAAAEAAAAAACAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
       <FileName>Models\WaveBitDepth.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="XstarS.WaveGenerator.Models.WaveChannels" Collapsed="true">
-    <Position X="11.25" Y="5" Width="1.5" />
+    <Position X="11.25" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAIAAAAABAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\WaveChannels.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="XstarS.WaveGenerator.Models.Waveform" Collapsed="true">
-    <Position X="13" Y="5" Width="1.5" />
+    <Position X="13" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAgAABAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Models\Waveform.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="XstarS.WaveGenerator.Models.WaveFormat" Collapsed="true">
-    <Position X="14.75" Y="5" Width="1.5" />
+    <Position X="9.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\WaveFormat.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="XstarS.WaveGenerator.Models.WaveSampleRate" Collapsed="true">
-    <Position X="9.5" Y="5.75" Width="1.5" />
+    <Position X="11.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAQAAAAAAAAQAAAAYAAAAEAAAAAAAA0CAAAA=</HashCode>
       <FileName>Models\WaveSampleRate.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Delegate Name="XstarS.WaveGenerator.Models.WaveformFunction" Collapsed="true">
-    <Position X="9.5" Y="6.75" Width="1.5" />
+    <Position X="9.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAQAAAA=</HashCode>
       <FileName>Models\WaveformFunctions.cs</FileName>
