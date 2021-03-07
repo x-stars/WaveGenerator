@@ -3,7 +3,7 @@
     /// <summary>
     /// 提供非托管类型的数组相关的帮助方法。
     /// </summary>
-    internal static unsafe class UnmanagedTypeArrayHelper
+    internal static unsafe class UnmanagedTypeArray
     {
         /// <summary>
         /// 确定当前非托管类型的数组与指定非托管类型的数组是否二进制相等。
@@ -22,7 +22,7 @@
             fixed (T* pArray = array, pOther = other)
             {
                 var size = sizeof(T) * array.Length;
-                return BinaryEqualityHelper.BinaryEquals(pArray, pOther, size);
+                return BinaryEqualityComparer.Equals(pArray, pOther, size);
             }
         }
 
@@ -39,7 +39,7 @@
             fixed (T* pArray = array)
             {
                 var size = sizeof(T) * array.Length;
-                return BinaryEqualityHelper.GetBinaryHashCode(pArray, size);
+                return BinaryEqualityComparer.GetHashCode(pArray, size);
             }
         }
     }

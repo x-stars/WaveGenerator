@@ -3,7 +3,7 @@
     /// <summary>
     /// 提供二进制相等比较相关的帮助方法。
     /// </summary>
-    internal static unsafe class BinaryEqualityHelper
+    internal static unsafe class BinaryEqualityComparer
     {
         /// <summary>
         /// 确定指定的两个指针指向的值是否二进制相等。
@@ -13,7 +13,7 @@
         /// <param name="size">指针指向的值以字节为单位的大小。</param>
         /// <returns>若 <paramref name="value"/> 与 <paramref name="other"/> 指向的值二进制相等，
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
-        internal static bool BinaryEquals(void* value, void* other, int size)
+        internal static bool Equals(void* value, void* other, int size)
         {
             switch (size)
             {
@@ -27,7 +27,7 @@
                     var sValue = (ushort*)value;
                     var sOther = (ushort*)other;
                     return (*sValue++ == *sOther++) &&
-                        BinaryEqualityHelper.BinaryEquals(sValue, sOther, size - 2);
+                        BinaryEqualityComparer.Equals(sValue, sOther, size - 2);
                 case 4:
                     return *(uint*)value == *(uint*)other;
                 case 5:
@@ -36,7 +36,7 @@
                     var iValue = (uint*)value;
                     var iOther = (uint*)other;
                     return (*iValue++ == *iOther++) &&
-                        BinaryEqualityHelper.BinaryEquals(iValue, iOther, size - 4);
+                        BinaryEqualityComparer.Equals(iValue, iOther, size - 4);
                 case 8:
                     return *(ulong*)value == *(ulong*)other;
                 default:
@@ -51,7 +51,7 @@
                         }
                     }
                     return (size % 8 == 0) ||
-                        BinaryEqualityHelper.BinaryEquals(lValue, lOther, size % 8);
+                        BinaryEqualityComparer.Equals(lValue, lOther, size % 8);
             }
         }
 
@@ -61,7 +61,7 @@
         /// <param name="value">指向要获取基于二进制的哈希代码的值的指针。</param>
         /// <param name="size">指针指向的值以字节为单位的大小。</param>
         /// <returns><paramref name="value"/> 指向的值基于二进制的哈希代码。</returns>
-        internal static int GetBinaryHashCode(void* value, int size)
+        internal static int GetHashCode(void* value, int size)
         {
             switch (size)
             {
@@ -74,7 +74,7 @@
                 case 3:
                     var sValue = (ushort*)value;
                     return *sValue++ * -1521134295 +
-                        BinaryEqualityHelper.GetBinaryHashCode(sValue, size - 2);
+                        BinaryEqualityComparer.GetHashCode(sValue, size - 2);
                 case 4:
                     return *(int*)value;
                 default:
@@ -86,7 +86,7 @@
                         hashCode = hashCode * -1521134295 + *iValue++;
                     }
                     return (size % 4 == 0) ? hashCode : (hashCode * -1521134295 +
-                        BinaryEqualityHelper.GetBinaryHashCode(iValue, size % 4));
+                        BinaryEqualityComparer.GetHashCode(iValue, size % 4));
             }
         }
     }

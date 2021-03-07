@@ -97,31 +97,5 @@ namespace XstarS
             }
             return result;
         }
-
-        /// <summary>
-        /// 将当前字节数组转换为十六进制数字的等效字符串表示形式。
-        /// </summary>
-        /// <param name="bytes">要转换为字符串的字节数组。</param>
-        /// <returns>当前字节数组的十六进制数字的等效字符串表示形式。</returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="bytes"/> 为 <see langword="null"/>。</exception>
-        public static string ToHexString(this byte[] bytes)
-        {
-            if (bytes is null)
-            {
-                throw new ArgumentNullException(nameof(bytes));
-            }
-
-            if (BitConverter.IsLittleEndian)
-            {
-                var length = bytes.Length;
-                var rBytes = new byte[length];
-                Array.Copy(bytes, rBytes, length);
-                Array.Reverse(rBytes);
-                bytes = rBytes;
-            }
-            var hexes = Array.ConvertAll(bytes, @byte => @byte.ToString("X2"));
-            return string.Join(string.Empty, hexes);
-        }
     }
 }
