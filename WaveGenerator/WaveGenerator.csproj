@@ -6,6 +6,7 @@
     <RootNamespace>XstarS.$(AssemblyName)</RootNamespace>
     <TargetFrameworks>net461;net472;netcoreapp3.1</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
+	<LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 

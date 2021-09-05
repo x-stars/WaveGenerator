@@ -83,23 +83,16 @@ namespace XstarS.WaveGenerator.Models
 
             var count = (int)(durationSeconds * (int)waveWriter.SampleRate);
 
-            var waveFunc = default(WaveformFunction);
-            switch (parameters.Waveform)
-            {
-                case Waveform.Sine: waveFunc = WaveformFunctions.Sine; break;
-                case Waveform.Square: waveFunc = WaveformFunctions.Square; break;
-                case Waveform.Triangle: waveFunc = WaveformFunctions.Triangle; break;
-                case Waveform.Sawtooth: waveFunc = WaveformFunctions.Sawtooth; break;
-                default: throw new ArgumentOutOfRangeException();
-            }
+            var amplitude = parameters.Amplitude * peek;
+            var frequency = parameters.Frequency;
+            var waveFunc = WaveformFunctions.CreateWaveform(
+                parameters.Waveform, amplitude, frequency, phase: 0.0);
 
             for (int i = 0; i < count; i++)
             {
                 var channels = (int)waveWriter.Channels;
-                var amplitude = parameters.Amplitude * peek;
-                var frequency = parameters.Frequency;
                 var time = (double)i / (int)waveWriter.SampleRate;
-                var value = waveFunc(amplitude, frequency, time);
+                var value = waveFunc(time);
 
                 var sample = default(WaveSample);
                 switch (waveWriter.BitDepth)

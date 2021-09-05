@@ -3,58 +3,79 @@
 namespace XstarS.WaveGenerator.Models
 {
     /// <summary>
-    /// 封装计算指定幅度和频率的波形在指定时间的函数值的函数。
+    /// 封装计算波形在指定时间的值的函数。
     /// </summary>
-    /// <param name="amplitude">波形的幅度。</param>
-    /// <param name="frequency">波形的频率。</param>
-    /// <param name="time">当前时间。</param>
-    /// <returns>指定幅度和频率的波形在当前时间的函数值。</returns>
-    internal delegate double WaveformFunction(double amplitude, double frequency, double time);
+    /// <param name="time">当前时间，也即波形函数的自变量。</param>
+    /// <returns>波形在 <paramref name="time"/> 处的函数值。</returns>
+    public delegate double WaveformFunction(double time);
 
     /// <summary>
-    /// 提供已知波形的函数。
+    /// 提供指定幅度、频率和相位的已知波形的函数。
     /// </summary>
-    internal static class WaveformFunctions
+    public static class WaveformFunctions
     {
         /// <summary>
-        /// 表示正弦波的函数。
+        /// 表示标准参数的正弦波的函数。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
         /// </summary>
-        /// <param name="amplitude">波形的幅度。</param>
-        /// <param name="frequency">波形的频率。</param>
-        /// <param name="time">当前时间。</param>
-        /// <returns>在指定频率与幅度的正弦波中，当前时间对应的函数值。</returns>
-        internal static double Sine(double amplitude, double frequency, double time) =>
-            amplitude * Math.Sin(2.0 * Math.PI * frequency * time);
+        /// <param name="time">当前时间，也即波形函数的自变量。</param>
+        /// <returns>标准参数的正弦波在 <paramref name="time"/> 的函数值。</returns>
+        public static double Sine(double time) => Math.Sin(time);
 
         /// <summary>
-        /// 表示方波的函数。
+        /// 表示标准参数的方波的函数。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
         /// </summary>
-        /// <param name="amplitude">波形的幅度。</param>
-        /// <param name="frequency">波形的频率。</param>
-        /// <param name="time">当前时间。</param>
-        /// <returns>在指定频率与幅度的方波中，当前时间对应的函数值。</returns>
-        internal static double Square(double amplitude, double frequency, double time) =>
-            amplitude * (time < 0 ? -1.0 : 1.0) * ((Math.Abs(time) / (1.0 / frequency) % 1.0 < 0.5) ? 1.0 : -1.0);
+        /// <param name="time">当前时间，也即波形函数的自变量。</param>
+        /// <returns>标准参数的方波在 <paramref name="time"/> 的函数值。</returns>
+        public static double Square(double time) =>
+            Math.Sign(Math.Sign(time) * (Math.PI - Math.Abs(time % (2 * Math.PI))));
 
         /// <summary>
-        /// 表示三角波的函数。
+        /// 表示标准参数的三角波的函数。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
         /// </summary>
-        /// <param name="amplitude">波形的幅度。</param>
-        /// <param name="frequency">波形的频率。</param>
-        /// <param name="time">当前时间。</param>
-        /// <returns>在指定频率与幅度的三角波中，当前时间对应的函数值。</returns>
-        internal static double Triangle(double amplitude, double frequency, double time) =>
-            amplitude * WaveformFunctions.Square(1.0, frequency, time + 0.25 / frequency) *
-            WaveformFunctions.Sawtooth(1.0, 2.0 * frequency, time + 0.5 / (2.0 * frequency));
+        /// <param name="time">当前时间，也即波形函数的自变量。</param>
+        /// <returns>标准参数的三角波在 <paramref name="time"/> 的函数值。</returns>
+        public static double Triangle(double time)
+        {
+            var shifted = Math.Abs((time - (Math.PI / 2)) % (2 * Math.PI)) - Math.PI;
+            return (Math.Sign(shifted) * shifted / Math.PI * 2) - 1;
+        }
 
         /// <summary>
-        /// 表示锯齿波的函数。
+        /// 表示标准参数的锯齿波的函数。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
         /// </summary>
+        /// <param name="time">当前时间，也即波形函数的自变量。</param>
+        /// <returns>标准参数的锯齿波在 <paramref name="time"/> 的函数值。</returns>
+        public static double Sawtooth(double time) =>
+            ((((time + Math.PI) % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI) - Math.PI) / Math.PI;
+
+        /// <summary>
+        /// 创建指定幅度、频率和相位的特定波形的函数。
+        /// </summary>
+        /// <param name="waveform">波形的类型。</param>
         /// <param name="amplitude">波形的幅度。</param>
         /// <param name="frequency">波形的频率。</param>
-        /// <param name="time">当前时间。</param>
-        /// <returns>在指定频率与幅度的锯齿波中，当前时间对应的函数值。</returns>
-        internal static double Sawtooth(double amplitude, double frequency, double time) =>
-            amplitude * (time < 0 ? -1.0 : 1.0) * (Math.Abs(time) / (1.0 / frequency) % 1.0 * 2.0 - 1.0);
+        /// <param name="phase">波形的相位。</param>
+        /// <returns>幅度为 <paramref name="amplitude"/>，频率为 <paramref name="frequency"/>，
+        /// 相位为 <paramref name="phase"/> 的 <paramref name="waveform"/> 波形的函数。</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="waveform"/> 不表示有效的波形类型。</exception>
+        public static WaveformFunction CreateWaveform(
+            Waveform waveform, double amplitude, double frequency, double phase)
+        {
+            var function = waveform switch
+            {
+                Waveform.Sine => (WaveformFunction)WaveformFunctions.Sine,
+                Waveform.Square => (WaveformFunction)WaveformFunctions.Square,
+                Waveform.Triangle => (WaveformFunction)WaveformFunctions.Triangle,
+                Waveform.Sawtooth => (WaveformFunction)WaveformFunctions.Sawtooth,
+                _ => throw new ArgumentOutOfRangeException(nameof(waveform))
+            };
+
+            return time => amplitude * function((time * frequency * (2 * Math.PI)) - phase);
+        }
     }
 }
