@@ -41,8 +41,7 @@ namespace XstarS.WaveGenerator.Models
         /// <param name="stream">要写入波形声音的流。</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="stream"/> 为 <see langword="null"/>。</exception>
-        public WaveStreamWriter(Stream stream) : this(stream,
-            WaveFormat.PCM, WaveChannels.Stereo, WaveSampleRate.Hz44100, WaveBitDepth.Bit16)
+        public WaveStreamWriter(Stream stream) : this(stream, WaveFormat.PCM)
         {
         }
 
@@ -75,7 +74,7 @@ namespace XstarS.WaveGenerator.Models
                 throw new ArgumentOutOfRangeException(nameof(bitDepth));
             }
 
-            this.Stream = stream;
+            this.Writer = new BinaryWriter(stream);
             this.Format = format;
             this.Channels = channels;
             this.SampleRate = sampleRate;
@@ -86,7 +85,7 @@ namespace XstarS.WaveGenerator.Models
         /// <summary>
         /// 获取当前正在写入的流。
         /// </summary>
-        public Stream Stream { get; }
+        public BinaryWriter Writer { get; }
 
         /// <summary>
         /// 获取当前波形声音的格式。
@@ -128,24 +127,24 @@ namespace XstarS.WaveGenerator.Models
         /// </summary>
         private void InitializeStream()
         {
-            var stream = this.Stream;
-            stream.Position = 0;
+            var writer = this.Writer;
+            writer.BaseStream.Position = 0;
 
-            stream.Write(WaveStreamWriter.ChunkID);
-            stream.Write(WaveFileOffsets.DataBlocks - WaveFileOffsets.FormatID);
-            stream.Write(WaveStreamWriter.FormatID);
+            writer.Write(WaveStreamWriter.ChunkID);
+            writer.Write(WaveFileOffsets.DataBlocks - WaveFileOffsets.FormatID);
+            writer.Write(WaveStreamWriter.FormatID);
 
-            stream.Write(WaveStreamWriter.FmtChunkID);
-            stream.Write(WaveFileOffsets.DataChunkID - WaveFileOffsets.AudioFormat);
-            stream.Write(this.Format);
-            stream.Write(this.Channels);
-            stream.Write(this.SampleRate);
-            stream.Write(this.ByteRate);
-            stream.Write(this.BlockAlign);
-            stream.Write(this.BitDepth);
+            writer.Write(WaveStreamWriter.FmtChunkID);
+            writer.Write(WaveFileOffsets.DataChunkID - WaveFileOffsets.AudioFormat);
+            writer.Write(this.Format);
+            writer.Write(this.Channels);
+            writer.Write(this.SampleRate);
+            writer.Write(this.ByteRate);
+            writer.Write(this.BlockAlign);
+            writer.Write(this.BitDepth);
 
-            stream.Write(WaveStreamWriter.DataChunkID);
-            stream.Write(0);
+            writer.Write(WaveStreamWriter.DataChunkID);
+            writer.Write(0);
         }
 
         /// <summary>
@@ -170,7 +169,7 @@ namespace XstarS.WaveGenerator.Models
                     new ArgumentException().Message, nameof(sample));
             }
 
-            this.Stream.Write(sample.Data, 0, sample.Length);
+            this.Writer.Write(sample.Data, 0, sample.Length);
             this.DataLength += sample.Length;
         }
 
@@ -195,7 +194,7 @@ namespace XstarS.WaveGenerator.Models
         /// </summary>
         public void ClearSamples()
         {
-            this.Stream.SetLength(WaveFileOffsets.DataBlocks);
+            this.Writer.BaseStream.SetLength(WaveFileOffsets.DataBlocks);
             this.DataLength = 0;
             this.UpdateChunkSize();
         }
@@ -205,15 +204,16 @@ namespace XstarS.WaveGenerator.Models
         /// </summary>
         public void UpdateChunkSize()
         {
-            var stream = this.Stream;
+            var writer = this.Writer;
+            var stream = writer.BaseStream;
             var position = stream.Position;
 
             stream.Position = WaveFileOffsets.ChunkSize;
-            stream.Write(this.DataLength +
+            writer.Write(this.DataLength +
                 WaveFileOffsets.DataBlocks - WaveFileOffsets.ChunkSize);
 
             stream.Position = WaveFileOffsets.DataChunkSize;
-            stream.Write(this.DataLength);
+            writer.Write(this.DataLength);
 
             stream.Position = position;
         }
@@ -237,7 +237,7 @@ namespace XstarS.WaveGenerator.Models
                 if (disposing)
                 {
                     this.UpdateChunkSize();
-                    this.Stream.Dispose();
+                    this.Writer.Dispose();
                 }
 
                 this.IsDisposed = true;
