@@ -129,7 +129,7 @@ namespace XstarS.Windows.Input
             /// <param name="e">提供属性更改通知的事件数据。</param>
             public void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == this.PropertyName)
+                if (this.PropertyName == e.PropertyName)
                 {
                     this.Command.NotifyCanExecuteChanged();
                 }

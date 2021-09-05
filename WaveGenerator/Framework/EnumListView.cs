@@ -37,7 +37,7 @@ namespace XstarS.ComponentModel
         /// <summary>
         /// 获取或设置当前视图选中的枚举值的索引。
         /// </summary>
-        /// <returns>当前视图表示的枚举值的索引。</returns>
+        /// <returns>当前视图选中的枚举值的索引。</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="value"/> 不为小于当前枚举值数量的非负整数。</exception>
         public int SelectedIndex

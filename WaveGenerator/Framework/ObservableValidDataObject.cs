@@ -93,8 +93,6 @@ namespace XstarS.ComponentModel
         /// </summary>
         /// <typeparam name="T">属性的类型。</typeparam>
         /// <param name="propertyName">要验证错误的属性的名称。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         protected virtual void ValidateProperty<T>(
             [CallerMemberName] string propertyName = null)
         {
@@ -102,7 +100,8 @@ namespace XstarS.ComponentModel
             var value = this.GetProperty<T>(propertyName);
             var context = new ValidationContext(this) { MemberName = propertyName };
             var results = new List<ValidationResult>();
-            try { Validator.TryValidateProperty(value, context, results); } catch { }
+            try { Validator.TryValidateProperty(value, context, results); }
+            catch (ArgumentException) { }
             var errors = new List<string>(results.Count);
             foreach (var result in results) { errors.Add(result.ErrorMessage); }
             this.SetErrors(errors, propertyName);
