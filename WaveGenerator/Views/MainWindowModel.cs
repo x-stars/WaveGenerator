@@ -146,7 +146,7 @@ namespace XstarS.WaveGenerator.Views
         public WaveformParameters GetWaveParameters()
         {
             return new WaveformParameters(
-                this.WaveformView.Value, amplitude: 1.0, (double)this.WaveFrequency);
+                this.WaveformView.Value, amplitude: 1.0, this.WaveFrequency);
         }
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace XstarS.WaveGenerator.Models
                 _ => throw new ArgumentOutOfRangeException(nameof(waveform))
             };
 
-            return time => amplitude * function((time * frequency * (2 * Math.PI)) - phase);
+            return time => amplitude * function((time * (2 * Math.PI) * frequency) + phase);
         }
     }
 }
