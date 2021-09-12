@@ -6,7 +6,7 @@ namespace XstarS.IO
     /// <summary>
     /// 提供二进制读取器 <see cref="BinaryReader"/> 的扩展方法。
     /// </summary>
-    public static class BinaryReaderExtensions
+    internal static class BinaryReaderExtensions
     {
         /// <summary>
         /// 从当前二进制读取器读取指定类型的非托管数据，并将当前位置前移对应的字节数。

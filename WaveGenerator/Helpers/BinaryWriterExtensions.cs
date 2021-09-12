@@ -6,7 +6,7 @@ namespace XstarS.IO
     /// <summary>
     /// 提供二进制写入器 <see cref="BinaryWriter"/> 的扩展方法。
     /// </summary>
-    public static class BinaryWriterExtensions
+    internal static class BinaryWriterExtensions
     {
         /// <summary>
         /// 将指定类型的非托管数据写入当前二进制写入器的基础流。
