@@ -1,4 +1,4 @@
-﻿namespace XstarS.WaveGenerator.Models
+﻿namespace XstarS.WaveGenerator.Waveforms
 {
     /// <summary>
     /// 表示常见波形。

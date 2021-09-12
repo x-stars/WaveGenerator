@@ -1,4 +1,4 @@
-﻿namespace XstarS.WaveGenerator.Models
+﻿namespace XstarS.WaveGenerator.WaveAudio
 {
     /// <summary>
     /// 表示波形声音的格式。

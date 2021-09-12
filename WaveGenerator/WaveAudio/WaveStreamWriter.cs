@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using XstarS.IO;
 
-namespace XstarS.WaveGenerator.Models
+namespace XstarS.WaveGenerator.WaveAudio
 {
     /// <summary>
     /// 表示波形声音的写入流。

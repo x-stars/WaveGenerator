@@ -4,6 +4,8 @@ using System.IO;
 using System.Windows.Media;
 using XstarS.ComponentModel;
 using XstarS.WaveGenerator.Models;
+using XstarS.WaveGenerator.WaveAudio;
+using XstarS.WaveGenerator.Waveforms;
 using XstarS.Windows.Input;
 
 namespace XstarS.WaveGenerator.Views

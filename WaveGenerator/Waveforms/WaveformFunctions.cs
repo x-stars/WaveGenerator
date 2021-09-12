@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XstarS.WaveGenerator.Models
+namespace XstarS.WaveGenerator.Waveforms
 {
     /// <summary>
     /// 封装计算波形在指定时间的值的函数。

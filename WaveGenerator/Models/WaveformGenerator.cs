@@ -1,4 +1,6 @@
 ﻿using System;
+using XstarS.WaveGenerator.WaveAudio;
+using XstarS.WaveGenerator.Waveforms;
 
 namespace XstarS.WaveGenerator.Models
 {

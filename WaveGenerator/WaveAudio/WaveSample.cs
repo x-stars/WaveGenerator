@@ -1,7 +1,7 @@
 ﻿using System;
 using XstarS.Runtime;
 
-namespace XstarS.WaveGenerator.Models
+namespace XstarS.WaveGenerator.WaveAudio
 {
     /// <summary>
     /// 表示一个波形声音的采样点。
