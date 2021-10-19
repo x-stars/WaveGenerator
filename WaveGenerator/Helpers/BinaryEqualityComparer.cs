@@ -19,30 +19,36 @@
             {
                 case 0:
                     return true;
-                case 1:
-                    return *(byte*)value == *(byte*)other;
-                case 2:
-                    return *(ushort*)value == *(ushort*)other;
-                case 3:
-                    var sValue = (ushort*)value;
-                    var sOther = (ushort*)other;
-                    return (*sValue++ == *sOther++) &&
-                        BinaryEqualityComparer.Equals(sValue, sOther, size - 2);
-                case 4:
-                    return *(uint*)value == *(uint*)other;
-                case 5:
-                case 6:
-                case 7:
-                    var iValue = (uint*)value;
-                    var iOther = (uint*)other;
-                    return (*iValue++ == *iOther++) &&
-                        BinaryEqualityComparer.Equals(iValue, iOther, size - 4);
-                case 8:
-                    return *(ulong*)value == *(ulong*)other;
+                case sizeof(sbyte):
+                    return *(sbyte*)value == *(sbyte*)other;
+                case sizeof(short):
+                    return *(short*)value == *(short*)other;
+                case sizeof(short) + sizeof(sbyte):
+                    return (*(short*)value == *(short*)other) &&
+                        (*(sbyte*)((short*)value + 1) == *(sbyte*)((short*)other + 1));
+                case sizeof(int):
+                    return *(int*)value == *(int*)other;
+                case sizeof(int) + sizeof(sbyte):
+                    return (*(int*)value == *(int*)other) &&
+                        (*(sbyte*)((int*)value + 1) == *(sbyte*)((int*)other + 1));
+                case sizeof(int) + sizeof(short):
+                    return (*(int*)value == *(int*)other) &&
+                        (*(short*)((int*)value + 1) == *(short*)((int*)other + 1));
+                case sizeof(int) * 2 - sizeof(byte):
+                    return (*(int*)value == *(int*)other) &&
+                        (*((int*)((byte*)value - 1) + 1) == *((int*)((byte*)other - 1) + 1));
+                case sizeof(long):
+                    return *(long*)value == *(long*)other;
                 default:
-                    var lValue = (ulong*)value;
-                    var lOther = (ulong*)other;
-                    var pEnd = lValue + (size / 8);
+                    if (size < 0)
+                    {
+                        size = -size;
+                        value = (byte*)value - size;
+                        other = (byte*)value - size;
+                    }
+                    var lValue = (long*)value;
+                    var lOther = (long*)other;
+                    var pEnd = lValue + (size / sizeof(long));
                     while (lValue < pEnd)
                     {
                         if (*lValue++ != *lOther++)
@@ -50,8 +56,8 @@
                             return false;
                         }
                     }
-                    return (size % 8 == 0) ||
-                        BinaryEqualityComparer.Equals(lValue, lOther, size % 8);
+                    return (size % sizeof(long) == 0) ||
+                        BinaryEqualityComparer.Equals(lValue, lOther, size % sizeof(long));
             }
         }
 
@@ -67,26 +73,38 @@
             {
                 case 0:
                     return 0;
-                case 1:
-                    return *(byte*)value;
-                case 2:
-                    return *(ushort*)value;
-                case 3:
-                    var sValue = (ushort*)value;
-                    return *sValue++ * -1521134295 +
-                        BinaryEqualityComparer.GetHashCode(sValue, size - 2);
-                case 4:
+                case sizeof(sbyte):
+                    return *(sbyte*)value;
+                case sizeof(short):
+                    return *(short*)value;
+                case sizeof(ushort) + sizeof(sbyte):
+                    return *(ushort*)value |
+                        (*(sbyte*)((short*)value + 1) << (sizeof(ushort) * 8));
+                case sizeof(int):
                     return *(int*)value;
+                case sizeof(int) + sizeof(sbyte):
+                    return *(int*)value ^ *(sbyte*)((int*)value + 1);
+                case sizeof(int) + sizeof(short):
+                    return *(int*)value ^ *(short*)((int*)value + 1);
+                case sizeof(int) * 2 - sizeof(byte):
+                    return *(int*)value ^ *((int*)((byte*)value - 1) + 1);
+                case sizeof(int) * 2:
+                    return *(int*)value ^ *((int*)value + 1);
                 default:
+                    if (size < 0)
+                    {
+                        size = -size;
+                        value = (byte*)value - size;
+                    }
                     var hashCode = 0;
                     var iValue = (int*)value;
-                    var pEnd = iValue + (size / 4);
+                    var pEnd = iValue + (size / sizeof(int));
                     while (iValue < pEnd)
                     {
-                        hashCode = hashCode * -1521134295 + *iValue++;
+                        hashCode ^= *iValue++;
                     }
-                    return (size % 4 == 0) ? hashCode : (hashCode * -1521134295 +
-                        BinaryEqualityComparer.GetHashCode(iValue, size % 4));
+                    return (size % sizeof(int) == 0) ? hashCode : (hashCode ^
+                        BinaryEqualityComparer.GetHashCode(iValue, size % sizeof(int)));
             }
         }
     }
