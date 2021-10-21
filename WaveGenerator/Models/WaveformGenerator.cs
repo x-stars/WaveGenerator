@@ -87,7 +87,7 @@ namespace XstarS.WaveGenerator.Models
 
             var amplitude = parameters.Amplitude * peek;
             var frequency = parameters.Frequency;
-            var waveFunc = WaveformFunctions.CreateWaveform(
+            var waveFunc = WaveformFunctions.Create(
                 parameters.Waveform, amplitude, frequency, phase: 0.0);
 
             for (int i = 0; i < count; i++)

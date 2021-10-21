@@ -3,13 +3,6 @@
 namespace XstarS.WaveGenerator.Waveforms
 {
     /// <summary>
-    /// 封装计算波形在指定时间的值的函数。
-    /// </summary>
-    /// <param name="time">当前时间，也即波形函数的自变量。</param>
-    /// <returns>波形在 <paramref name="time"/> 处的函数值。</returns>
-    public delegate double WaveformFunction(double time);
-
-    /// <summary>
     /// 提供指定幅度、频率和相位的已知波形的函数。
     /// </summary>
     public static class WaveformFunctions
@@ -63,7 +56,7 @@ namespace XstarS.WaveGenerator.Waveforms
         /// 相位为 <paramref name="phase"/> 的 <paramref name="waveform"/> 波形的函数。</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="waveform"/> 不表示有效的波形类型。</exception>
-        public static WaveformFunction CreateWaveform(
+        public static WaveformFunction Create(
             Waveform waveform, double amplitude, double frequency, double phase)
         {
             var function = waveform switch
