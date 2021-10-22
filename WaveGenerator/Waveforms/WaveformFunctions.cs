@@ -9,7 +9,7 @@ namespace XstarS.WaveGenerator.Waveforms
     {
         /// <summary>
         /// 表示标准参数的正弦波的函数。
-        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 = 0。
         /// </summary>
         /// <param name="time">当前时间，也即波形函数的自变量。</param>
         /// <returns>标准参数的正弦波在 <paramref name="time"/> 的函数值。</returns>
@@ -17,7 +17,7 @@ namespace XstarS.WaveGenerator.Waveforms
 
         /// <summary>
         /// 表示标准参数的方波的函数。
-        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 = 0。
         /// </summary>
         /// <param name="time">当前时间，也即波形函数的自变量。</param>
         /// <returns>标准参数的方波在 <paramref name="time"/> 的函数值。</returns>
@@ -26,7 +26,7 @@ namespace XstarS.WaveGenerator.Waveforms
 
         /// <summary>
         /// 表示标准参数的三角波的函数。
-        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 = 0。
         /// </summary>
         /// <param name="time">当前时间，也即波形函数的自变量。</param>
         /// <returns>标准参数的三角波在 <paramref name="time"/> 的函数值。</returns>
@@ -38,7 +38,7 @@ namespace XstarS.WaveGenerator.Waveforms
 
         /// <summary>
         /// 表示标准参数的锯齿波的函数。
-        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 0。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 = 0。
         /// </summary>
         /// <param name="time">当前时间，也即波形函数的自变量。</param>
         /// <returns>标准参数的锯齿波在 <paramref name="time"/> 的函数值。</returns>
