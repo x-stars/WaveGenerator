@@ -33,7 +33,7 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <summary>
         /// 表示当前对象是否已经被释放。
         /// </summary>
-        private bool IsDisposed = false;
+        private volatile bool IsDisposed = false;
 
         /// <summary>
         /// 以要写入的流初始化 <see cref="WaveStreamWriter"/> 类的新实例。

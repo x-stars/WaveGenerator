@@ -83,13 +83,12 @@ namespace XstarS.WaveGenerator.Models
                 default: throw new ArgumentOutOfRangeException();
             }
 
-            var count = (int)(durationSeconds * (int)waveWriter.SampleRate);
-
             var amplitude = parameters.Amplitude * peek;
             var frequency = parameters.Frequency;
             var waveFunc = WaveformFunctions.Create(
                 parameters.Waveform, amplitude, frequency, phase: 0.0);
 
+            var count = (int)(durationSeconds * (int)waveWriter.SampleRate);
             for (int i = 0; i < count; i++)
             {
                 var channels = (int)waveWriter.Channels;

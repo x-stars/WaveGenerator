@@ -225,7 +225,7 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
         public override bool Equals(object obj)
         {
-            return obj is WaveSample sample && this.Equals(sample);
+            return (obj is WaveSample sample) && this.Equals(sample);
         }
 
         /// <summary>
@@ -257,6 +257,6 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <param name="right">要进行比较的第二个 <see cref="WaveSample"/>。</param>
         /// <returns>若 <paramref name="left"/> 与 <paramref name="right"/> 不等，
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
-        public static bool operator !=(WaveSample left, WaveSample right) => !(left == right);
+        public static bool operator !=(WaveSample left, WaveSample right) => !left.Equals(right);
     }
 }
