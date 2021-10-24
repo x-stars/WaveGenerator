@@ -1,28 +1,30 @@
 ﻿using System;
 using XstarS.Runtime;
+using int24 = XstarS.Int24;
 
 namespace XstarS.WaveGenerator.WaveAudio
 {
     /// <summary>
     /// 表示一个波形声音的采样点。
     /// </summary>
-    public struct WaveSample : IEquatable<WaveSample>
+    [Serializable]
+    public readonly struct WaveSample : IEquatable<WaveSample>
     {
         /// <summary>
         /// 使用采样点数据初始化 <see cref="WaveSample"/> 结构的新实例。
         /// </summary>
+        /// <param name="info">采样点的结构参数。</param>
         /// <param name="data">采样点数据的字节数组。</param>
-        /// <param name="format">采样点的波形声音格式。</param>
-        /// <param name="channels">采样点的声道数量。</param>
-        /// <param name="bitDepth">采样点的采样位深度。</param>
-        private WaveSample(byte[] data,
-            WaveFormat format, WaveChannels channels, WaveBitDepth bitDepth)
+        private WaveSample(WaveSampleInfo info, byte[] data)
         {
+            this.Info = info;
             this.Data = data;
-            this.Format = format;
-            this.Channels = channels;
-            this.BitDepth = bitDepth;
         }
+
+        /// <summary>
+        /// 获取当前采样点的结构参数。
+        /// </summary>
+        public WaveSampleInfo Info { get; }
 
         /// <summary>
         /// 获取当前采样点的字节序列数据。
@@ -35,49 +37,18 @@ namespace XstarS.WaveGenerator.WaveAudio
         public int Length => this.Data.Length;
 
         /// <summary>
-        /// 获取当前采样点的波形声音格式。
-        /// </summary>
-        public WaveFormat Format { get; }
-
-        /// <summary>
-        /// 获取当前采样点的声道数量。
-        /// </summary>
-        public WaveChannels Channels { get; }
-
-        /// <summary>
-        /// 获取当前采样点的采样位深度。
-        /// </summary>
-        public WaveBitDepth BitDepth { get; }
-
-        /// <summary>
         /// 以指定的 8 位整数序列为各声道的采样值创建 <see cref="WaveSample"/> 结构的实例。
         /// </summary>
         /// <param name="values">作为各声道的采样值的 8 位整数序列。</param>
         /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
-        public static unsafe WaveSample Int8(params byte[] values)
+        public static WaveSample Int8(params byte[] values)
         {
-            if (values is null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-
-            var channels = values.Length;
-            var data = new byte[channels * sizeof(byte)];
-            fixed (byte* pValue = values)
-            {
-                fixed (byte* pData = data)
-                {
-                    var tpData = (byte*)pData;
-                    for (int i = 0; i < channels; i++)
-                    {
-                        tpData[i] = pValue[i];
-                    }
-                }
-            }
-            return new WaveSample(data,
-                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit8);
+            var data = WaveSample.ToByteArray(values);
+            var channels = (WaveChannels)values.Length;
+            var info = WaveSampleInfo.Int8(channels);
+            return new WaveSample(info, data);
         }
 
         /// <summary>
@@ -87,28 +58,12 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
-        public static unsafe WaveSample Int16(params short[] values)
+        public static WaveSample Int16(params short[] values)
         {
-            if (values is null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-
-            var channels = values.Length;
-            var data = new byte[channels * sizeof(short)];
-            fixed (short* pValue = values)
-            {
-                fixed (byte* pData = data)
-                {
-                    var tpData = (short*)pData;
-                    for (int i = 0; i < channels; i++)
-                    {
-                        tpData[i] = pValue[i];
-                    }
-                }
-            }
-            return new WaveSample(data,
-                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit16);
+            var data = WaveSample.ToByteArray(values);
+            var channels = (WaveChannels)values.Length;
+            var info = WaveSampleInfo.Int16(channels);
+            return new WaveSample(info, data);
         }
 
         /// <summary>
@@ -118,28 +73,12 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
-        public static unsafe WaveSample Int24(params Int24[] values)
+        public static WaveSample Int24(params int24[] values)
         {
-            if (values is null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-
-            var channels = values.Length;
-            var data = new byte[channels * sizeof(Int24)];
-            fixed (Int24* pValue = values)
-            {
-                fixed (byte* pData = data)
-                {
-                    var tpData = (Int24*)pData;
-                    for (int i = 0; i < channels; i++)
-                    {
-                        tpData[i] = pValue[i];
-                    }
-                }
-            }
-            return new WaveSample(data,
-                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit24);
+            var data = WaveSample.ToByteArray(values);
+            var channels = (WaveChannels)values.Length;
+            var info = WaveSampleInfo.Int24(channels);
+            return new WaveSample(info, data);
         }
 
         /// <summary>
@@ -149,28 +88,12 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
-        public static unsafe WaveSample Int32(params int[] values)
+        public static WaveSample Int32(params int[] values)
         {
-            if (values is null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
-
-            var channels = values.Length;
-            var data = new byte[channels * sizeof(int)];
-            fixed (int* pValue = values)
-            {
-                fixed (byte* pData = data)
-                {
-                    var tpData = (int*)pData;
-                    for (int i = 0; i < channels; i++)
-                    {
-                        tpData[i] = pValue[i];
-                    }
-                }
-            }
-            return new WaveSample(data,
-                WaveFormat.PCM, (WaveChannels)channels, WaveBitDepth.Bit32);
+            var data = WaveSample.ToByteArray(values);
+            var channels = (WaveChannels)values.Length;
+            var info = WaveSampleInfo.Int32(channels);
+            return new WaveSample(info, data);
         }
 
         /// <summary>
@@ -180,7 +103,60 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
-        public static unsafe WaveSample Float32(params float[] values)
+        public static WaveSample Float32(params float[] values)
+        {
+            var data = WaveSample.ToByteArray(values);
+            var channels = (WaveChannels)values.Length;
+            var info = WaveSampleInfo.Float32(channels);
+            return new WaveSample(info, data);
+        }
+
+        /// <summary>
+        /// 以指定的幅度为 1 的波形值序列为各声道的采样值创建 <see cref="WaveSample"/> 结构的实例。
+        /// </summary>
+        /// <param name="info">采样点的结构参数。</param>
+        /// <param name="values">作为各声道的采样值的幅度为 1 的波形值序列。</param>
+        /// <returns>创建得到的 <see cref="WaveSample"/> 结构的实例。</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="info"/> 中的枚举值不为有效值；
+        /// 或者 <see cref="WaveSampleInfo.Format"/> 为 <see cref="WaveFormat.IEEEFloat"/>，
+        /// 但 <see cref="WaveSampleInfo.BitDepth"/> 不为 <see cref="WaveBitDepth.Bit32"/>。</exception>
+        public static WaveSample FromWaveforms(WaveSampleInfo info, params double[] values)
+        {
+            return info.Format switch
+            {
+                WaveFormat.PCM => info.BitDepth switch
+                {
+                    WaveBitDepth.Bit8 => WaveSample.Int8(Array.ConvertAll(
+                        values, value => (byte)info.GetSampleValue(value))),
+                    WaveBitDepth.Bit16 => WaveSample.Int16(Array.ConvertAll(
+                        values, value => (short)info.GetSampleValue(value))),
+                    WaveBitDepth.Bit24 => WaveSample.Int24(Array.ConvertAll(
+                        values, value => (int24)info.GetSampleValue(value))),
+                    WaveBitDepth.Bit32 => WaveSample.Int32(Array.ConvertAll(
+                        values, value => (int)info.GetSampleValue(value))),
+                    _ => throw new ArgumentOutOfRangeException(nameof(info))
+                },
+                WaveFormat.IEEEFloat => info.BitDepth switch
+                {
+                    WaveBitDepth.Bit32 => WaveSample.Float32(Array.ConvertAll(
+                        values, value => (float)info.GetSampleValue(value))),
+                    _ => throw new ArgumentOutOfRangeException(nameof(info))
+                },
+                _ => throw new ArgumentOutOfRangeException(nameof(info))
+            };
+        }
+
+        /// <summary>
+        /// 将指定的各声道采样值的数组转换为等效的字节数据序列。
+        /// </summary>
+        /// <param name="values">各声道的采样值的数据序列。</param>
+        /// <returns>转换得到的等效的字节数据序列。</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="values"/> 为 <see langword="null"/>。</exception>
+        private static unsafe byte[] ToByteArray<T>(params T[] values) where T : unmanaged
         {
             if (values is null)
             {
@@ -188,20 +164,19 @@ namespace XstarS.WaveGenerator.WaveAudio
             }
 
             var channels = values.Length;
-            var data = new byte[channels * sizeof(float)];
-            fixed (float* pValue = values)
+            var data = new byte[channels * sizeof(T)];
+            fixed (T* pValue = values)
             {
                 fixed (byte* pData = data)
                 {
-                    var tpData = (float*)pData;
+                    var tpData = (T*)pData;
                     for (int i = 0; i < channels; i++)
                     {
                         tpData[i] = pValue[i];
                     }
                 }
             }
-            return new WaveSample(data,
-                WaveFormat.IEEEFloat, (WaveChannels)channels, WaveBitDepth.Bit32);
+            return data;
         }
 
         /// <summary>
@@ -210,12 +185,8 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <param name="other">要当前实例进行比较的另一 <see cref="WaveSample"/>。</param>
         /// <returns>若 <paramref name="other"/> 与当前实例相等，
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
-        public bool Equals(WaveSample other)
-        {
-            return this.Channels == other.Channels &&
-                   this.BitDepth == other.BitDepth &&
-                   this.Data.BinaryEquals(other.Data);
-        }
+        public bool Equals(WaveSample other) =>
+            this.Info.BinaryEquals(other.Info) && this.Data.BinaryEquals(other.Data);
 
         /// <summary>
         /// 指示当前 <see cref="WaveSample"/> 是否等于另一对象。
@@ -223,23 +194,15 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <param name="obj">要当前实例进行比较的另一对象。</param>
         /// <returns>若 <paramref name="obj"/> 为 <see cref="WaveSample"/> 且与当前实例相等，
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
-        public override bool Equals(object obj)
-        {
-            return (obj is WaveSample sample) && this.Equals(sample);
-        }
+        public override bool Equals(object obj) =>
+            (obj is WaveSample sample) && this.Equals(sample);
 
         /// <summary>
         /// 获取当前实例的哈希代码。
         /// </summary>
         /// <returns>当前实例的哈希代码。</returns>
-        public override int GetHashCode()
-        {
-            var hashCode = -223416172;
-            hashCode = hashCode * -1521134295 + this.Channels.GetHashCode();
-            hashCode = hashCode * -1521134295 + this.BitDepth.GetHashCode();
-            hashCode = hashCode * -1521134295 + this.Data.GetBinaryHashCode();
-            return hashCode;
-        }
+        public override int GetHashCode() =>
+            this.Info.GetBinaryHashCode() * -1521134295 + this.Data.GetBinaryHashCode();
 
         /// <summary>
         /// 比较两个 <see cref="WaveSample"/> 是否相等。

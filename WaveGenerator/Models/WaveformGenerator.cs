@@ -24,7 +24,7 @@ namespace XstarS.WaveGenerator.Models
             WaveformParameters parameters, double durationSeconds)
         {
             WaveformGenerator.GenerateWave(waveWriter, parameters,
-                ((int)waveWriter.Channels).InitializeArray(_ => true), durationSeconds);
+                ((int)waveWriter.SampleInfo.Channels).InitializeArray(_ => true), durationSeconds);
         }
 
         /// <summary>
@@ -60,74 +60,22 @@ namespace XstarS.WaveGenerator.Models
             {
                 throw new ArgumentOutOfRangeException(nameof(durationSeconds));
             }
-            if (channelEnables.Length != (int)waveWriter.Channels)
+            if (channelEnables.Length != (int)waveWriter.SampleInfo.Channels)
             {
                 throw new ArgumentException(
                     new ArgumentException().Message, nameof(channelEnables));
             }
 
-            var peek = parameters.Amplitude;
-            switch (waveWriter.BitDepth)
-            {
-                case WaveBitDepth.Bit8: peek *= sbyte.MaxValue; break;
-                case WaveBitDepth.Bit16: peek *= short.MaxValue; break;
-                case WaveBitDepth.Bit24: peek *= Int24.MaxValue; break;
-                case WaveBitDepth.Bit32:
-                    switch (waveWriter.Format)
-                    {
-                        case WaveFormat.PCM: peek *= int.MaxValue; break;
-                        case WaveFormat.IEEEFloat: peek *= 1.0; break;
-                        default: throw new ArgumentOutOfRangeException();
-                    }
-                    break;
-                default: throw new ArgumentOutOfRangeException();
-            }
-
-            var amplitude = parameters.Amplitude * peek;
-            var frequency = parameters.Frequency;
-            var waveFunc = WaveformFunctions.Create(
-                parameters.Waveform, amplitude, frequency, phase: 0.0);
-
+            var waveFunc = WaveformFunctions.Create(parameters);
             var count = (int)(durationSeconds * (int)waveWriter.SampleRate);
             for (int i = 0; i < count; i++)
             {
-                var channels = (int)waveWriter.Channels;
                 var time = (double)i / (int)waveWriter.SampleRate;
-                var value = waveFunc(time);
-
-                var sample = default(WaveSample);
-                switch (waveWriter.BitDepth)
-                {
-                    case WaveBitDepth.Bit8:
-                        sample = WaveSample.Int8(channels.InitializeArray(
-                            channel => (byte)((channelEnables[channel] ? value : 0.0) - sbyte.MinValue)));
-                        break;
-                    case WaveBitDepth.Bit16:
-                        sample = WaveSample.Int16(channels.InitializeArray(
-                            channel => (short)(channelEnables[channel] ? value : 0.0)));
-                        break;
-                    case WaveBitDepth.Bit24:
-                        sample = WaveSample.Int24(channels.InitializeArray(
-                            channel => (Int24)(channelEnables[channel] ? value : 0.0)));
-                        break;
-                    case WaveBitDepth.Bit32:
-                        switch (waveWriter.Format)
-                        {
-                            case WaveFormat.PCM:
-                                sample = WaveSample.Int32(channels.InitializeArray(
-                                    channel => (int)(channelEnables[channel] ? value : 0.0)));
-                                break;
-                            case WaveFormat.IEEEFloat:
-                                sample = WaveSample.Float32(channels.InitializeArray(
-                                    channel => (float)(channelEnables[channel] ? value : 0.0)));
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                var waveformValue = waveFunc(time);
+                var channels = (int)waveWriter.SampleInfo.Channels;
+                var waveformValues = channels.InitializeArray(
+                    channel => channelEnables[channel] ? waveformValue : 0.0);
+                var sample = WaveSample.FromWaveforms(waveWriter.SampleInfo, waveformValues);
                 waveWriter.WriteSample(sample);
             }
             waveWriter.UpdateChunkSize();

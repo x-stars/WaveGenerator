@@ -41,7 +41,8 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <param name="stream">要写入波形声音的流。</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="stream"/> 为 <see langword="null"/>。</exception>
-        public WaveStreamWriter(Stream stream) : this(stream, WaveFormat.PCM)
+        public WaveStreamWriter(Stream stream)
+            : this(stream, WaveSampleInfo.Int16(WaveChannels.Stereo))
         {
         }
 
@@ -49,36 +50,21 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// 以要写入的流和波形声音参数初始化 <see cref="WaveStreamWriter"/> 类的新实例。
         /// </summary>
         /// <param name="stream">要写入波形声音的流。</param>
-        /// <param name="format">波形声音的格式。</param>
-        /// <param name="channels">波形声音的声道数量。</param>
+        /// <param name="sampleInfo">波形声音采样点的结构参数。</param>
         /// <param name="sampleRate">波形声音的采样率。</param>
-        /// <param name="bitDepth">波形声音的采样位深度。</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="stream"/> 为 <see langword="null"/>。</exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="format"/> 为 <see cref="WaveFormat.IEEEFloat"/>，
-        /// 但 <paramref name="bitDepth"/> 不为 <see cref="WaveBitDepth.Bit32"/>。</exception>
-        public WaveStreamWriter(Stream stream,
-            WaveFormat format = WaveFormat.PCM,
-            WaveChannels channels = WaveChannels.Stereo,
-            WaveSampleRate sampleRate = WaveSampleRate.Hz44100,
-            WaveBitDepth bitDepth = WaveBitDepth.Bit16)
+        public WaveStreamWriter(Stream stream, WaveSampleInfo sampleInfo,
+            WaveSampleRate sampleRate = WaveSampleRate.Hz48000)
         {
             if (stream is null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            if ((format == WaveFormat.IEEEFloat) &&
-                (bitDepth != WaveBitDepth.Bit32))
-            {
-                throw new ArgumentOutOfRangeException(nameof(bitDepth));
-            }
 
             this.Writer = new BinaryWriter(stream);
-            this.Format = format;
-            this.Channels = channels;
+            this.SampleInfo = sampleInfo;
             this.SampleRate = sampleRate;
-            this.BitDepth = bitDepth;
             this.InitializeStream();
         }
 
@@ -88,14 +74,9 @@ namespace XstarS.WaveGenerator.WaveAudio
         public BinaryWriter Writer { get; }
 
         /// <summary>
-        /// 获取当前波形声音的格式。
+        /// 获取当前波形声音采样点的结构参数。
         /// </summary>
-        public WaveFormat Format { get; }
-
-        /// <summary>
-        /// 获取当前波形声音的声道数量。
-        /// </summary>
-        public WaveChannels Channels { get; }
+        public WaveSampleInfo SampleInfo { get; }
 
         /// <summary>
         /// 获取当前波形声音的采样率。
@@ -103,19 +84,14 @@ namespace XstarS.WaveGenerator.WaveAudio
         public WaveSampleRate SampleRate { get; }
 
         /// <summary>
-        /// 获取当前波形声音的采样位深度。
-        /// </summary>
-        public WaveBitDepth BitDepth { get; }
-
-        /// <summary>
         /// 获取当前波形声音的字节率。
         /// </summary>
-        public int ByteRate => (int)this.Channels * (int)this.SampleRate * (int)this.BitDepth / 8;
+        public int ByteRate => this.SampleInfo.SampleSize * (int)this.SampleRate;
 
         /// <summary>
         /// 获取当前波形声音的区块对齐。
         /// </summary>
-        public short BlockAlign => (short)((int)this.Channels * (int)this.BitDepth / 8);
+        public short BlockAlign => (short)this.SampleInfo.SampleSize;
 
         /// <summary>
         /// 获取当前波形声音数据区块的大小。
@@ -136,12 +112,12 @@ namespace XstarS.WaveGenerator.WaveAudio
 
             writer.Write(WaveStreamWriter.FmtChunkID);
             writer.Write(WaveFileOffsets.DataChunkID - WaveFileOffsets.AudioFormat);
-            writer.Write(this.Format);
-            writer.Write(this.Channels);
+            writer.Write(this.SampleInfo.Format);
+            writer.Write(this.SampleInfo.Channels);
             writer.Write(this.SampleRate);
             writer.Write(this.ByteRate);
             writer.Write(this.BlockAlign);
-            writer.Write(this.BitDepth);
+            writer.Write(this.SampleInfo.BitDepth);
 
             writer.Write(WaveStreamWriter.DataChunkID);
             writer.Write(0);
@@ -161,9 +137,7 @@ namespace XstarS.WaveGenerator.WaveAudio
             {
                 throw new ArgumentNullException(nameof(sample));
             }
-            if ((sample.Format != this.Format) ||
-                (sample.Channels != this.Channels) ||
-                (sample.BitDepth != this.BitDepth))
+            if (this.SampleInfo != sample.Info)
             {
                 throw new ArgumentException(
                     new ArgumentException().Message, nameof(sample));

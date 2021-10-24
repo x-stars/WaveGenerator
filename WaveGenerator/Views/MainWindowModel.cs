@@ -16,6 +16,21 @@ namespace XstarS.WaveGenerator.Views
     public class MainWindowModel : ObservableValidDataObject
     {
         /// <summary>
+        /// 表示波形声音允许的最小频率。
+        /// </summary>
+        protected const double MinWaveFreqConst = 16.0;
+
+        /// <summary>
+        /// 表示波形声音允许的最大频率。
+        /// </summary>
+        protected const double MaxWaveFreqConst = 24000.0;
+
+        /// <summary>
+        /// 表示波形声音的默认频率。
+        /// </summary>
+        protected const double DefaultFreqConst = 440.0;
+
+        /// <summary>
         /// 表示临时波形声音文件的路径。
         /// </summary>
         private readonly string TempWavePath = Path.Combine(
@@ -24,7 +39,7 @@ namespace XstarS.WaveGenerator.Views
         /// <summary>
         /// 表示用于播放波形声音的媒体播放器。
         /// </summary>
-        private readonly MediaPlayer WavePlayer;
+        private readonly MediaPlayer WavePlayer = new MediaPlayer();
 
         /// <summary>
         /// 初始化 <see cref="MainWindowModel"/> 类的新实例。
@@ -33,10 +48,9 @@ namespace XstarS.WaveGenerator.Views
         {
             this.WaveformView = new EnumVectorView<Waveform>();
             this.WaveformView[Waveform.Sine] = true;
-            this.WaveFrequency = 440;
+            this.WaveFrequency = DefaultFreqConst;
             this.HasLeftChannel = true;
             this.HasRightChannel = true;
-            this.WavePlayer = new MediaPlayer();
             this.WavePlayer.MediaEnded += this.OnWaveEnded;
             this.WavePlayer.MediaFailed += this.OnWaveEnded;
             this.GenerateWaveCommand = new DelegateCommand(
@@ -53,17 +67,17 @@ namespace XstarS.WaveGenerator.Views
         /// <summary>
         /// 获取波形声音允许的最小频率。
         /// </summary>
-        public double MinWaveFrequency => 16.0;
+        public double MinWaveFrequency => MinWaveFreqConst;
 
         /// <summary>
         /// 获取波形声音允许的最大频率。
         /// </summary>
-        public double MaxWaveFrequency => 24000.0;
+        public double MaxWaveFrequency => MaxWaveFreqConst;
 
         /// <summary>
         /// 获取或设置波形声音的频率。
         /// </summary>
-        [Range(16.0, 24000.0)]
+        [Range(MinWaveFreqConst, MaxWaveFreqConst)]
         public double WaveFrequency
         {
             get => this.GetProperty<double>();
@@ -114,8 +128,7 @@ namespace XstarS.WaveGenerator.Views
             var wavePath = this.TempWavePath;
             using (var waveFile = File.OpenWrite(wavePath))
             {
-                using (var waveWriter = new WaveStreamWriter(waveFile,
-                    sampleRate: WaveSampleRate.Hz48000))
+                using (var waveWriter = new WaveStreamWriter(waveFile))
                 {
                     WaveformGenerator.GenerateWave(
                         waveWriter, this.GetWaveParameters(),
@@ -145,19 +158,14 @@ namespace XstarS.WaveGenerator.Views
         /// 获取当前模型表示的波形声音的波形参数。
         /// </summary>
         /// <returns>当前模型表示的波形声音的波形参数。</returns>
-        public WaveformParameters GetWaveParameters()
-        {
-            return new WaveformParameters(
-                this.WaveformView.Value, amplitude: 1.0, this.WaveFrequency);
-        }
+        public WaveformParameters GetWaveParameters() =>
+            new WaveformParameters(this.WaveformView.Value, frequency: this.WaveFrequency);
 
         /// <summary>
         /// 获取当前模型表示的要输出声音的声道。
         /// </summary>
         /// <returns>当前模型表示的要输出声音的声道。</returns>
-        public bool[] GetChannelEnables()
-        {
-            return new[] { this.HasLeftChannel, this.HasRightChannel };
-        }
+        public bool[] GetChannelEnables() =>
+            new[] { this.HasLeftChannel, this.HasRightChannel };
     }
 }

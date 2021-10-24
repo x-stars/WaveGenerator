@@ -46,20 +46,16 @@ namespace XstarS.WaveGenerator.Waveforms
             ((((time + Math.PI) % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI) - Math.PI) / Math.PI;
 
         /// <summary>
-        /// 创建指定幅度、频率和相位的特定波形的函数。
+        /// 创建标准参数的波形函数。
+        /// 此处所称的标准参数为：幅度 = 1，频率 = 1 / 2π，相位 = 0。
         /// </summary>
         /// <param name="waveform">波形的类型。</param>
-        /// <param name="amplitude">波形的幅度。</param>
-        /// <param name="frequency">波形的频率。</param>
-        /// <param name="phase">波形的相位。</param>
-        /// <returns>幅度为 <paramref name="amplitude"/>，频率为 <paramref name="frequency"/>，
-        /// 相位为 <paramref name="phase"/> 的 <paramref name="waveform"/> 波形的函数。</returns>
+        /// <returns>标准参数的 <paramref name="waveform"/> 波形的函数。</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="waveform"/> 不表示有效的波形类型。</exception>
-        public static WaveformFunction Create(
-            Waveform waveform, double amplitude, double frequency, double phase)
+        public static WaveformFunction Create(Waveform waveform)
         {
-            var function = waveform switch
+            return waveform switch
             {
                 Waveform.Sine => (WaveformFunction)WaveformFunctions.Sine,
                 Waveform.Square => (WaveformFunction)WaveformFunctions.Square,
@@ -67,8 +63,28 @@ namespace XstarS.WaveGenerator.Waveforms
                 Waveform.Sawtooth => (WaveformFunction)WaveformFunctions.Sawtooth,
                 _ => throw new ArgumentOutOfRangeException(nameof(waveform))
             };
+        }
 
-            return time => amplitude * function((time * (2 * Math.PI) * frequency) + phase);
+        /// <summary>
+        /// 创建指定波形参数指定的波形函数。
+        /// </summary>
+        /// <param name="parameters">波形的相关参数。</param>
+        /// <returns><paramref name="parameters"/> 描述的波形的函数。</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="parameters"/>
+        /// 的 <see cref="WaveformParameters.Waveform"/> 不表示有效的波形类型。</exception>
+        public static WaveformFunction Create(WaveformParameters parameters)
+        {
+            var function = parameters.Waveform switch
+            {
+                Waveform.Sine => (WaveformFunction)WaveformFunctions.Sine,
+                Waveform.Square => (WaveformFunction)WaveformFunctions.Square,
+                Waveform.Triangle => (WaveformFunction)WaveformFunctions.Triangle,
+                Waveform.Sawtooth => (WaveformFunction)WaveformFunctions.Sawtooth,
+                _ => throw new ArgumentOutOfRangeException(nameof(parameters))
+            };
+
+            return time => parameters.Amplitude *
+                function((time * (2 * Math.PI) * parameters.Frequency) + parameters.Phase);
         }
     }
 }
