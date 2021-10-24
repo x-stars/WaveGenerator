@@ -5,7 +5,7 @@ using int24 = XstarS.Int24;
 namespace XstarS.WaveGenerator.WaveAudio
 {
     /// <summary>
-    /// 表示一个波形声音的采样点的结构参数。
+    /// 表示波形声音的采样点的结构参数。
     /// </summary>
     [Serializable]
     public readonly struct WaveSampleInfo : IEquatable<WaveSampleInfo>

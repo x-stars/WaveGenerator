@@ -1,7 +1,7 @@
 ﻿namespace XstarS.WaveGenerator.WaveAudio
 {
     /// <summary>
-    /// 表示波形声音二进制文件各区块的偏移量。
+    /// 表示波形声音文件各区块的偏移量。
     /// </summary>
     internal static class WaveFileOffsets
     {
