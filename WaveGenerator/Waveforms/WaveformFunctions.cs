@@ -53,17 +53,14 @@ namespace XstarS.WaveGenerator.Waveforms
         /// <returns>标准参数的 <paramref name="waveform"/> 波形的函数。</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="waveform"/> 不表示有效的波形类型。</exception>
-        public static WaveformFunction Create(Waveform waveform)
+        public static WaveformFunction Create(Waveform waveform) => waveform switch
         {
-            return waveform switch
-            {
-                Waveform.Sine => (WaveformFunction)WaveformFunctions.Sine,
-                Waveform.Square => (WaveformFunction)WaveformFunctions.Square,
-                Waveform.Triangle => (WaveformFunction)WaveformFunctions.Triangle,
-                Waveform.Sawtooth => (WaveformFunction)WaveformFunctions.Sawtooth,
-                _ => throw new ArgumentOutOfRangeException(nameof(waveform))
-            };
-        }
+            Waveform.Sine => (WaveformFunction)WaveformFunctions.Sine,
+            Waveform.Square => (WaveformFunction)WaveformFunctions.Square,
+            Waveform.Triangle => (WaveformFunction)WaveformFunctions.Triangle,
+            Waveform.Sawtooth => (WaveformFunction)WaveformFunctions.Sawtooth,
+            _ => throw new ArgumentOutOfRangeException(nameof(waveform))
+        };
 
         /// <summary>
         /// 创建指定波形参数指定的波形函数。
@@ -74,15 +71,7 @@ namespace XstarS.WaveGenerator.Waveforms
         /// 的 <see cref="WaveformParameters.Waveform"/> 不表示有效的波形类型。</exception>
         public static WaveformFunction Create(WaveformParameters parameters)
         {
-            var function = parameters.Waveform switch
-            {
-                Waveform.Sine => (WaveformFunction)WaveformFunctions.Sine,
-                Waveform.Square => (WaveformFunction)WaveformFunctions.Square,
-                Waveform.Triangle => (WaveformFunction)WaveformFunctions.Triangle,
-                Waveform.Sawtooth => (WaveformFunction)WaveformFunctions.Sawtooth,
-                _ => throw new ArgumentOutOfRangeException(nameof(parameters))
-            };
-
+            var function = WaveformFunctions.Create(parameters.Waveform);
             return time => parameters.Amplitude *
                 function((time * (2 * Math.PI) * parameters.Frequency) + parameters.Phase);
         }
