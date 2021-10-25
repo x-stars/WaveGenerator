@@ -19,26 +19,26 @@
             {
                 case 0:
                     return true;
-                case sizeof(sbyte):
-                    return *(sbyte*)value == *(sbyte*)other;
-                case sizeof(short):
-                    return *(short*)value == *(short*)other;
-                case sizeof(short) + sizeof(sbyte):
-                    return (*(short*)value == *(short*)other) &&
-                        (*(sbyte*)((short*)value + 1) == *(sbyte*)((short*)other + 1));
-                case sizeof(int):
-                    return *(int*)value == *(int*)other;
-                case sizeof(int) + sizeof(sbyte):
-                    return (*(int*)value == *(int*)other) &&
-                        (*(sbyte*)((int*)value + 1) == *(sbyte*)((int*)other + 1));
-                case sizeof(int) + sizeof(short):
-                    return (*(int*)value == *(int*)other) &&
-                        (*(short*)((int*)value + 1) == *(short*)((int*)other + 1));
-                case sizeof(int) * 2 - sizeof(byte):
-                    return (*(int*)value == *(int*)other) &&
-                        (*((int*)((byte*)value - 1) + 1) == *((int*)((byte*)other - 1) + 1));
-                case sizeof(long):
-                    return *(long*)value == *(long*)other;
+                case sizeof(byte):
+                    return *(byte*)value == *(byte*)other;
+                case sizeof(ushort):
+                    return *(ushort*)value == *(ushort*)other;
+                case sizeof(ushort) + sizeof(byte):
+                    return (*(ushort*)value == *(ushort*)other) &&
+                        (*(byte*)((ushort*)value + 1) == *(byte*)((ushort*)other + 1));
+                case sizeof(uint):
+                    return *(uint*)value == *(uint*)other;
+                case sizeof(uint) + sizeof(byte):
+                    return (*(uint*)value == *(uint*)other) &&
+                        (*(byte*)((uint*)value + 1) == *(byte*)((uint*)other + 1));
+                case sizeof(uint) + sizeof(ushort):
+                    return (*(uint*)value == *(uint*)other) &&
+                        (*(ushort*)((uint*)value + 1) == *(ushort*)((uint*)other + 1));
+                case sizeof(uint) * 2 - sizeof(byte):
+                    return (*(uint*)value == *(uint*)other) &&
+                        (*((uint*)((byte*)value - 1) + 1) == *((uint*)((byte*)other - 1) + 1));
+                case sizeof(ulong):
+                    return *(ulong*)value == *(ulong*)other;
                 default:
                     if (size < 0)
                     {
@@ -46,9 +46,9 @@
                         value = (byte*)value - size;
                         other = (byte*)value - size;
                     }
-                    var lValue = (long*)value;
-                    var lOther = (long*)other;
-                    var pEnd = lValue + (size / sizeof(long));
+                    var lValue = (ulong*)value;
+                    var lOther = (ulong*)other;
+                    var pEnd = lValue + (size / sizeof(ulong));
                     while (lValue < pEnd)
                     {
                         if (*lValue++ != *lOther++)
@@ -56,8 +56,8 @@
                             return false;
                         }
                     }
-                    return (size % sizeof(long) == 0) ||
-                        BinaryEqualityComparer.Equals(lValue, lOther, size % sizeof(long));
+                    return (size % sizeof(ulong) == 0) ||
+                        BinaryEqualityComparer.Equals(lValue, lOther, size % sizeof(ulong));
             }
         }
 
@@ -73,19 +73,19 @@
             {
                 case 0:
                     return 0;
-                case sizeof(sbyte):
-                    return *(sbyte*)value;
-                case sizeof(short):
-                    return *(short*)value;
-                case sizeof(ushort) + sizeof(sbyte):
+                case sizeof(byte):
+                    return *(byte*)value;
+                case sizeof(ushort):
+                    return *(ushort*)value;
+                case sizeof(ushort) + sizeof(byte):
                     return *(ushort*)value |
-                        (*(sbyte*)((short*)value + 1) << (sizeof(ushort) * 8));
+                        (*(byte*)((ushort*)value + 1) << (sizeof(ushort) * 8));
                 case sizeof(int):
                     return *(int*)value;
-                case sizeof(int) + sizeof(sbyte):
-                    return *(int*)value ^ *(sbyte*)((int*)value + 1);
-                case sizeof(int) + sizeof(short):
-                    return *(int*)value ^ *(short*)((int*)value + 1);
+                case sizeof(int) + sizeof(byte):
+                    return *(int*)value ^ *(byte*)((int*)value + 1);
+                case sizeof(int) + sizeof(ushort):
+                    return *(int*)value ^ *(ushort*)((int*)value + 1);
                 case sizeof(int) * 2 - sizeof(byte):
                     return *(int*)value ^ *((int*)((byte*)value - 1) + 1);
                 case sizeof(int) * 2:
