@@ -42,6 +42,19 @@ namespace XstarS.ComponentModel
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
         /// <summary>
+        /// 获取指定属性是否包含验证错误。
+        /// </summary>
+        /// <param name="propertyName">要获取是否包含验证错误的属性的名称。</param>
+        /// <returns>如果指定属性当前具有验证错误，
+        /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
+        public bool ContainsErrors(
+            [CallerMemberName] string propertyName = null)
+        {
+            propertyName = propertyName ?? string.Empty;
+            return this.PropertiesErrors.ContainsKey(propertyName);
+        }
+
+        /// <summary>
         /// 获取指定属性的验证错误。
         /// </summary>
         /// <param name="propertyName">要获取验证错误的属性的名称。</param>
@@ -51,7 +64,7 @@ namespace XstarS.ComponentModel
         {
             propertyName = propertyName ?? string.Empty;
             this.PropertiesErrors.TryGetValue(propertyName, out var errors);
-            return errors;
+            return errors ?? Array.Empty<object>();
         }
 
         /// <summary>
@@ -64,11 +77,11 @@ namespace XstarS.ComponentModel
         {
             propertyName = propertyName ?? string.Empty;
             var thisHadErrors = !this.PropertiesErrors.IsEmpty;
-            var hadErrors = !(this.GetErrors(propertyName) is null);
+            var hadErrors = this.PropertiesErrors.ContainsKey(propertyName);
             var hasErrors = !(errors is null) && errors.GetEnumerator().MoveNext();
             if (hasErrors) { this.PropertiesErrors[propertyName] = errors; }
             else { this.PropertiesErrors.TryRemove(propertyName, out errors); }
-            var errorsChanged = hadErrors ^ hasErrors;
+            var errorsChanged = hadErrors || hasErrors;
             if (errorsChanged) { this.NotifyErrorsChanged(propertyName); }
             var hasErrorsChanged = thisHadErrors ^ this.HasErrors;
             if (hasErrorsChanged) { this.NotifyPropertyChanged(nameof(this.HasErrors)); }

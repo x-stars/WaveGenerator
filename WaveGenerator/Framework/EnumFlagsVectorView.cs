@@ -66,8 +66,8 @@ namespace XstarS.ComponentModel
         /// <param name="value">指示是否设置枚举值。</param>
         protected virtual void SetFlag(TEnum flagValue, bool value)
         {
-            var iValue = ((IConvertible)this.Value).ToUInt64(null);
-            var iFlag = ((IConvertible)flagValue).ToUInt64(null);
+            var iValue = Convert.ToUInt64(this.Value);
+            var iFlag = Convert.ToUInt64(flagValue);
             if (value) { iValue |= iFlag; } else { iValue &= ~iFlag; }
             this.Value = (TEnum)Enum.ToObject(typeof(TEnum), iValue);
         }
