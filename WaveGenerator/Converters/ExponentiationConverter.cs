@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
+using Convertible = System.Convert;
 
 namespace XstarS.Windows.Data
 {
@@ -8,7 +10,7 @@ namespace XstarS.Windows.Data
     /// 表示 <see cref="IConvertible"/> 数字到其对应的指数的转换器。
     /// </summary>
     [ValueConversion(typeof(IConvertible), typeof(IConvertible),
-        ParameterType = typeof(IConvertible))]
+                     ParameterType = typeof(IConvertible))]
     public sealed class ExponentiationConverter : IValueConverter
     {
         /// <summary>
@@ -26,10 +28,14 @@ namespace XstarS.Windows.Data
         /// <returns><paramref name="value"/> 的底为 <paramref name="parameter"/> 的指数。</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var number = ((value as IConvertible) ?? 0.0).ToDouble(culture);
-            var @base = ((parameter as IConvertible) ?? Math.E).ToDouble(culture);
-            var result = Math.Pow(@base, number);
-            return ((IConvertible)result).ToType(targetType, culture);
+            try
+            {
+                var number = Convertible.ToDouble(value ?? 0.0, culture);
+                var @base = Convertible.ToDouble(parameter ?? Math.E, culture);
+                var result = Math.Pow(@base, number);
+                return Convertible.ChangeType(result, targetType, culture);
+            }
+            catch (Exception) { return DependencyProperty.UnsetValue; }
         }
 
         /// <summary>
@@ -42,10 +48,14 @@ namespace XstarS.Windows.Data
         /// <returns><paramref name="value"/> 的底为 <paramref name="parameter"/> 的对数。</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var number = ((value as IConvertible) ?? 0.0).ToDouble(culture);
-            var @base = ((parameter as IConvertible) ?? Math.E).ToDouble(culture);
-            var result = Math.Log(number, @base);
-            return ((IConvertible)result).ToType(targetType, culture);
+            try
+            {
+                var number = Convertible.ToDouble(value ?? 0.0, culture);
+                var @base = Convertible.ToDouble(parameter ?? Math.E, culture);
+                var result = Math.Log(number, @base);
+                return Convertible.ChangeType(result, targetType, culture);
+            }
+            catch (Exception) { return DependencyProperty.UnsetValue; }
         }
     }
 }
