@@ -118,6 +118,8 @@ namespace XstarS.ComponentModel
         /// <param name="value">属性的新值。</param>
         /// <param name="propertyName">要设置值的属性的名称。</param>
         /// <returns>名为 <paramref name="propertyName"/> 的属性的原值。</returns>
+        /// <exception cref="InvalidCastException">
+        /// <paramref name="value"/> 无法转换为指定属性的类型。</exception>
         protected override object? ExchangeProperty(string propertyName, object? value)
         {
             return (propertyName == nameof(this.Value)) ?
