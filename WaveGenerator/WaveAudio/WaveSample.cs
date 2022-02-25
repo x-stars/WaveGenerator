@@ -170,9 +170,9 @@ namespace XstarS.WaveGenerator.WaveAudio
                 fixed (byte* pData = data)
                 {
                     var tpData = (T*)pData;
-                    for (int i = 0; i < channels; i++)
+                    foreach (var index in 0..channels)
                     {
-                        tpData[i] = pValue[i];
+                        tpData[index] = pValue[index];
                     }
                 }
             }

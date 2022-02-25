@@ -68,9 +68,9 @@ namespace XstarS.WaveGenerator.Models
 
             var waveFunc = WaveformFunctions.Create(parameters);
             var count = (int)(durationSeconds * (int)waveWriter.SampleRate);
-            for (int i = 0; i < count; i++)
+            foreach (var index in 0..count)
             {
-                var time = (double)i / (int)waveWriter.SampleRate;
+                var time = (double)index / (int)waveWriter.SampleRate;
                 var waveformValue = waveFunc(time);
                 var channels = (int)waveWriter.SampleInfo.Channels;
                 var waveformValues = channels.InitializeArray(
