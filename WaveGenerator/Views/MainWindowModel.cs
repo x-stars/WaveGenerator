@@ -147,7 +147,7 @@ namespace XstarS.WaveGenerator.Views
         /// </summary>
         /// <param name="sender">事件源。</param>
         /// <param name="e">提供事件数据的对象。</param>
-        private void OnWaveEnded(object sender, EventArgs e)
+        private void OnWaveEnded(object? sender, EventArgs e)
         {
             this.WavePlayer.Close();
             File.Delete(this.TempWavePath);

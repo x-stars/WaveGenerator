@@ -1,5 +1,5 @@
 ﻿using System;
-using XstarS.Runtime;
+using XstarS.Runtime.CompilerServices;
 using int24 = XstarS.Int24;
 
 namespace XstarS.WaveGenerator.WaveAudio
@@ -133,7 +133,7 @@ namespace XstarS.WaveGenerator.WaveAudio
         /// <param name="obj">要当前实例进行比较的另一对象。</param>
         /// <returns>若 <paramref name="obj"/> 为 <see cref="WaveSampleInfo"/> 且与当前实例相等，
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             (obj is WaveSampleInfo other) && this.Equals(other);
 
         /// <summary>

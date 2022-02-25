@@ -1,5 +1,5 @@
 ﻿using System;
-using XstarS.Runtime;
+using XstarS.Runtime.CompilerServices;
 
 namespace XstarS.WaveGenerator.Waveforms
 {
@@ -84,7 +84,7 @@ namespace XstarS.WaveGenerator.Waveforms
         /// <param name="obj">要当前实例进行比较的另一对象。</param>
         /// <returns>若 <paramref name="obj"/> 为 <see cref="WaveformParameters"/> 且与当前实例相等，
         /// 则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             (obj is WaveformParameters other) && this.Equals(other);
 
         /// <summary>

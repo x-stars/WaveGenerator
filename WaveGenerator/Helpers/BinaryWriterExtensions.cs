@@ -9,7 +9,7 @@ namespace XstarS.IO
     internal static class BinaryWriterExtensions
     {
         /// <summary>
-        /// 将指定类型的非托管数据写入当前二进制写入器的基础流。
+        /// 将指定类型的非托管数据写入当前流，并将当前位置前移非托管数据大小的字节数。
         /// </summary>
         /// <typeparam name="T">非托管数据的类型。</typeparam>
         /// <param name="writer">要写入数据的二进制写入器。</param>
@@ -25,12 +25,16 @@ namespace XstarS.IO
             }
 
             var size = sizeof(T);
-            var bytes = new byte[size];
-            fixed (byte* pBytes = bytes)
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            var buffer = (stackalloc byte[size]);
+#else
+            var buffer = (new byte[size]);
+#endif
+            fixed (byte* pBuffer = buffer)
             {
-                *(T*)pBytes = value;
+                *(T*)pBuffer = value;
             }
-            writer.Write(bytes);
+            writer.Write(buffer);
         }
     }
 }
