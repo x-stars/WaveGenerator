@@ -25,15 +25,12 @@ namespace XstarS.ComponentModel
         /// <summary>
         /// 表示当前视图表示的枚举值。
         /// </summary>
-        private volatile Enum EnumValue;
+        private volatile Enum EnumValue = default(TEnum);
 
         /// <summary>
         /// 初始化 <see cref="EnumVectorView{TEnum}"/> 类的新实例。
         /// </summary>
-        public EnumVectorView()
-        {
-            this.EnumValue = default(TEnum);
-        }
+        public EnumVectorView() { }
 
         /// <summary>
         /// 获取或设置当前视图表示的枚举值。

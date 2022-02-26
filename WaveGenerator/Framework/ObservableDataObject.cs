@@ -20,12 +20,12 @@ namespace XstarS.ComponentModel
         /// <summary>
         /// 表示不存在的值，用于区别 <see langword="null"/> 值。
         /// </summary>
-        private static readonly object? Missing = new object();
+        private static readonly object Missing = new object();
 
         /// <summary>
-        /// 表示所有属性的值。
+        /// 表示所有属性的数据存储。
         /// </summary>
-        private readonly ConcurrentDictionary<string, object?> Properties;
+        private readonly ConcurrentDictionary<string, object?> DataStorage;
 
         /// <summary>
         /// 表示所有属性的关联属性的名称。
@@ -37,7 +37,7 @@ namespace XstarS.ComponentModel
         /// </summary>
         protected ObservableDataObject()
         {
-            this.Properties = new ConcurrentDictionary<string, object?>();
+            this.DataStorage = new ConcurrentDictionary<string, object?>();
             this.RelatedProperties = new ConcurrentDictionary<string, string[]>();
             this.InitializeRelatedProperties();
         }
@@ -109,7 +109,7 @@ namespace XstarS.ComponentModel
         /// <returns>名为 <paramref name="propertyName"/> 的属性的值。</returns>
         protected virtual object? GetPropertyCore(string propertyName)
         {
-            var hasValue = this.Properties.TryGetValue(propertyName, out var value);
+            var hasValue = this.DataStorage.TryGetValue(propertyName, out var value);
             return hasValue ? value : ObservableDataObject.Missing;
         }
 
@@ -122,7 +122,7 @@ namespace XstarS.ComponentModel
         /// <paramref name="value"/> 无法转换为指定属性的类型。</exception>
         protected virtual void SetPropertyCore(string propertyName, object? value)
         {
-            this.Properties[propertyName] = value;
+            this.DataStorage[propertyName] = value;
         }
 
         /// <summary>
