@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Windows;
 
-// ָʾ����Ԫ���Ƿ�ʹ�ù������Թ淶���б��롣
+// 指示程序元素是否使用公共语言规范进行编译。
 [assembly: CLSCompliant(true)]
 
 [assembly: ThemeInfo(
-    ResourceDictionaryLocation.None, //�����ض���Դ�ʵ�����λ��
-                                     //(δ��ҳ�����ҵ���Դʱʹ�ã�
-                                     //��Ӧ�ó�����Դ�ֵ����ҵ�ʱʹ��)
-    ResourceDictionaryLocation.SourceAssembly //������Դ�ʵ�����λ��
-                                              //(δ��ҳ�����ҵ���Դʱʹ�ã�
-                                              //��Ӧ�ó�����κ�����ר����Դ�ֵ����ҵ�ʱʹ��)
+    ResourceDictionaryLocation.None, //主题特定资源词典所处位置
+                                     //(未在页面中找到资源时使用，
+                                     //或应用程序资源字典中找到时使用)
+    ResourceDictionaryLocation.SourceAssembly //常规资源词典所处位置
+                                              //(未在页面中找到资源时使用，
+                                              //、应用程序或任何主题专用资源字典中找到时使用)
 )]
