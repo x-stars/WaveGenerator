@@ -1,6 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable enable
+
 #if !(NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER)
 namespace System.Diagnostics.CodeAnalysis
 {
@@ -88,7 +90,7 @@ namespace System.Diagnostics.CodeAnalysis
         /// <summary>
         /// Initializes the attribute with the specified return value condition.
         /// </summary>
-        /// <param name="returnValue">The return value condition. 
+        /// <param name="returnValue">The return value condition.
         /// If the method returns this value, the associated parameter may be null.</param>
         public MaybeNullWhenAttribute(bool returnValue)
         {
@@ -98,7 +100,7 @@ namespace System.Diagnostics.CodeAnalysis
         /// <summary>
         /// Gets the return value condition.
         /// </summary>
-        /// <returns>The return value condition. 
+        /// <returns>The return value condition.
         /// If the method returns this value, the associated parameter may be null.</returns>
         public bool ReturnValue { get; }
     }
@@ -124,7 +126,7 @@ namespace System.Diagnostics.CodeAnalysis
         /// <summary>
         /// Gets the return value condition.
         /// </summary>
-        /// <returns>The return value condition. 
+        /// <returns>The return value condition.
         /// If the method returns this value, the associated parameter may be null.</returns>
         public bool ReturnValue { get; }
     }
