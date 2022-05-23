@@ -3,153 +3,126 @@
 // https://opensource.org/licenses/MIT
 
 // Provide the range-foreach syntax for C# 9.0 or higher.
-// Requires: Framework >= 4.0 || Core || Standard.
+// Requires: System.Index and System.Range types.
 // Reference this file to write foreach-loops like this:
 //   foreach (var index in 0..100) { /* ... */ }
 // which is equivalent to the legacy for-loop below:
 //   for (int i = 0; i < 100; i++) { /* ... */ }
-// NOTE: use '^' to represent negative numbers,
+// NOTE: Use '^' to represent negative numbers,
 //       e.g. ^100..0 (instead of -100..0).
+// If STEPPED_RANGE is defined, this can also be used:
+//   foreach (var index in (99..^1).Step(-2)) { /* ... */ }
+// which is equivalent to the legacy for-loop below:
+//   for (int i = 100 - 1; i >= 0; i += -2) { /* ... */ }
 
 #nullable disable
+//#define STEPPED_RANGE
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 [CompilerGenerated, DebuggerNonUserCode]
 [EditorBrowsable(EditorBrowsableState.Never)]
+[Obsolete("This type supports the range-foreach syntax " +
+          "and should not be used directly in user code.")]
 internal static class RangeEnumerable
 {
-    public static RangeEnumerator GetEnumerator(this Range range)
+    public static Enumerator GetEnumerator(this Range range)
     {
-        return new RangeEnumerator(range);
+        return new Enumerator(in range);
     }
-}
 
-namespace System
-{
+#if STEPPED_RANGE
+    public static Stepped Step(this Range range, int step)
+    {
+        return new Stepped(range, step);
+    }
+#endif
+
     [CompilerGenerated, DebuggerNonUserCode]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    internal struct RangeEnumerator
+    public struct Enumerator
     {
         private int CurrentIndex;
 
         private readonly int EndIndex;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RangeEnumerator(Range range)
+        internal Enumerator(in Range range)
         {
-            var pair = new IndexPair() { Range = range };
-            int start = pair.StartIndex, end = pair.EndIndex;
-            this.CurrentIndex = start - (start >> 31) - 1;
-            this.EndIndex = end - (end >> 31);
+            this.CurrentIndex = range.Start.GetOffset(0) - 1;
+            this.EndIndex = range.End.GetOffset(0);
         }
 
         public int Current => this.CurrentIndex;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext() => ++this.CurrentIndex < this.EndIndex;
-
-        [StructLayout(LayoutKind.Explicit)]
-        [CompilerGenerated, DebuggerNonUserCode]
-        private struct IndexPair
-        {
-            [FieldOffset(0)] public Range Range;
-            [FieldOffset(0)] public int StartIndex;
-            [FieldOffset(4)] public int EndIndex;
-        }
     }
-}
 
-#if !(NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER)
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// NOTE: some APIs have been removed for code size and compatibility reasons.
-
-namespace System
-{
+#if STEPPED_RANGE
     [CompilerGenerated, DebuggerNonUserCode]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    internal readonly struct Index : IEquatable<Index>
+    public readonly struct Stepped : IEquatable<Stepped>
     {
-        private readonly int _value;
+        public Range Range { get; }
+
+        public int Step { get; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Index(int value, bool fromEnd = false)
+        public Stepped(Range range, int step)
         {
-            if (value < 0) { throw Index.ValueOutOfRange(); }
-            this._value = fromEnd ? ~value : value;
+            if (step == 0) { throw Stepped.StepOutOfRange(); }
+            this.Range = range; this.Step = step;
         }
 
-        private Index(int value) { this._value = value; }
+        public Enumerator GetEnumerator() => new Enumerator(in this);
 
-        public static Index Start => new Index(0);
+        public bool Equals(Stepped other) =>
+            this.Range.Equals(other.Range) && (this.Step == other.Step);
 
-        public static Index End => new Index(~0);
+        public override bool Equals(object obj) =>
+            (obj is Stepped other) && this.Equals(other);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Index FromStart(int value) =>
-            (value < 0) ? throw Index.ValueOutOfRange() : new Index(value);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Index FromEnd(int value) =>
-            (value < 0) ? throw Index.ValueOutOfRange() : new Index(~value);
-
-        public int Value => (this._value < 0) ? ~this._value : this._value;
-
-        public bool IsFromEnd => this._value < 0;
-
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public int GetOffset(int length) { ... }
-
-        public override bool Equals(object value) =>
-            (value is Index other) && (this._value == other._value);
-
-        public bool Equals(Index other) => this._value == other._value;
-
-        public override int GetHashCode() => this._value;
-
-        public static implicit operator Index(int value) => Index.FromStart(value);
+        public override int GetHashCode() =>
+            this.Range.GetHashCode() * 31 + this.Step;
 
         public override string ToString() =>
-            this.IsFromEnd ? this.ToStringFromEnd() : ((uint)this.Value).ToString();
+            this.Range.ToString() + ".%" + this.Step.ToString();
 
-        private string ToStringFromEnd() => "^" + this.Value.ToString();
+        private static ArgumentOutOfRangeException StepOutOfRange() =>
+            new ArgumentOutOfRangeException("step", "Non-zero number required.");
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ArgumentOutOfRangeException ValueOutOfRange() =>
-            new ArgumentOutOfRangeException("value", "Non-negative number required.");
+        [CompilerGenerated, DebuggerNonUserCode]
+        public struct Enumerator
+        {
+            private int CurrentIndex;
+
+            private readonly int EndIndex;
+
+            private readonly int StepSign;
+
+            private readonly int StepValue;
+
+            internal Enumerator(in Stepped stepped)
+            {
+                var range = stepped.Range;
+                int start = range.Start.GetOffset(0);
+                int end = range.End.GetOffset(0);
+                int step = stepped.Step;
+                int sign = step >> 31;
+                this.CurrentIndex = (start - step) ^ sign;
+                this.EndIndex = end ^ sign;
+                this.StepSign = sign;
+                this.StepValue = (step ^ sign) - sign;
+            }
+
+            public int Current => this.CurrentIndex ^ this.StepSign;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public bool MoveNext() =>
+                (this.CurrentIndex += this.StepValue) < this.EndIndex;
+        }
     }
-
-    [CompilerGenerated, DebuggerNonUserCode]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    internal readonly struct Range : IEquatable<Range>
-    {
-        public Index Start { get; }
-
-        public Index End { get; }
-
-        public Range(Index start, Index end) { this.Start = start; this.End = end; }
-
-        public override bool Equals(object value) =>
-            (value is Range other) && this.Start.Equals(other.Start) && this.End.Equals(other.End);
-
-        public bool Equals(Range other) => this.Start.Equals(other.Start) && this.End.Equals(other.End);
-
-        public override int GetHashCode() => this.Start.GetHashCode() * 31 + this.End.GetHashCode();
-
-        public override string ToString() => this.Start.ToString() + ".." + this.End.ToString();
-
-        public static Range StartAt(Index start) => new Range(start, Index.End);
-
-        public static Range EndAt(Index end) => new Range(Index.Start, end);
-
-        public static Range All => new Range(Index.Start, Index.End);
-
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public (int Offset, int Length) GetOffsetAndLength(int length) { ... }
-    }
-}
 #endif
+}
